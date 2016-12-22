@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@android:color/white">
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:gravity="center"
+        android:id="@+id/linearLayout"
+        android:weightSum="1">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="KT Coin"
+            android:id="@+id/Header"
+            android:layout_weight="20"
+            android:textSize="50dp"
+            android:layout_gravity="center_horizontal" />
+
+        <ImageView
+            android:layout_width="580dp"
+            android:layout_height="181dp"
+            android:scaleType="fitCenter"
+            android:id="@+id/imageView"
+            android:layout_gravity="center"
+            android:src="@drawable/coinsicon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BALANCE"
+            android:id="@+id/balanceLabel" android:layout_gravity="center" android:clickable="false"
+            android:textColor="#ffacacac" android:textSize="17sp" android:padding="5dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1000"
+            android:id="@+id/balance"
+            android:layout_gravity="center_horizontal"
+            android:clickable="false"
+            android:textColor="#ffacacac"
+            android:textSize="50sp"
+            android:padding="5dp" />
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/linearLayout"
+        android:layout_alignParentStart="true">
+
+        <ImageView
+            android:layout_width="195dp"
+            android:layout_height="118dp"
+            android:id="@+id/imageView2"
+            android:layout_gravity="left|center_vertical"
+            android:src="@drawable/pay" />
+
+        <ImageView
+            android:layout_width="195dp"
+            android:layout_height="118dp"
+            android:id="@+id/imageView3"
+            android:layout_gravity="right|center_vertical"
+            android:src="@drawable/transfer" />
+
+        <TextView
+            android:layout_width="199dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Pay"
+            android:id="@+id/textView2"
+            android:layout_gravity="left|top"
+            android:textAlignment="center"
+            android:textSize="30dp"
+            android:textColor="#000000"
+            android:layout_marginTop="30dp" />
+
+        <TextView
+            android:layout_width="199dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Transfer"
+            android:id="@+id/textView3"
+            android:layout_gravity="right|top"
+            android:textAlignment="center"
+            android:textSize="30dp"
+            android:textColor="#000000"
+            android:layout_marginTop="30dp" />
+
+    </FrameLayout>
+
+</RelativeLayout>
+
