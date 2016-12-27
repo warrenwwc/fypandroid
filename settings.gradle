@@ -1,1 +1,1 @@
-include ':app', ':nineoldandroids-library-2.4.0'
+include ':app', ':nineoldandroids-library-2.4.0', ':httpcore-4.4.1', ':org.apache.commons.codec-1.8', ':httpclient-4.5.2'

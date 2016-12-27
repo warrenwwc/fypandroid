@@ -1,11 +1,14 @@
 package is.fyp;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 import is.fyp.ResideMenu;
 import is.fyp.ResideMenuItem;
@@ -19,6 +22,7 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
     private ResideMenuItem itemHistory;
     private ResideMenuItem itemTopup;
     private ResideMenuItem itemSettings;
+    TextView logout;
 
     /**
      * Called when the activity is first created.
@@ -63,6 +67,8 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
         resideMenu.addMenuItem(itemHistory, ResideMenu.DIRECTION_RIGHT);
         resideMenu.addMenuItem(itemTopup, ResideMenu.DIRECTION_RIGHT);
 
+        logout = (TextView) findViewById(R.id.logout);
+
         // You can disable a direction by setting ->
         // resideMenu.setSwipeDirectionDisable(ResideMenu.DIRECTION_RIGHT);
 
@@ -99,6 +105,16 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
         }
 
         resideMenu.closeMenu();
+    }
+
+    public void logout(View view) {
+        SharedPreferences sharedPreferences = getSharedPreferences("loginData" , MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("isLogin", false);
+        editor.apply();
+        Intent i = new Intent(MenuActivity.this, MainActivity.class);
+        MenuActivity.this.finish();
+        startActivity(i);
     }
 
     private ResideMenu.OnMenuListener menuListener = new ResideMenu.OnMenuListener() {

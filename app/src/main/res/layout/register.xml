@@ -96,6 +96,7 @@
         android:layout_marginTop="16dp"
         android:background="#b45705"
         android:text="Sign Up"
+        android:onClick="register"
         android:textColor="#fff"
         android:id="@+id/sign_up" />
 
