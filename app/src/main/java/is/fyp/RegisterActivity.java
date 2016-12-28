@@ -1,5 +1,6 @@
 package is.fyp;
 
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -100,6 +101,10 @@ public class RegisterActivity extends AppCompatActivity {
         Log.d("json2", json);
         //sendPostRequest("http://192.168.102.209/user_reg", json);
         makeRequest("http://192.168.102.129/user_reg", json);
+        SharedPreferences sharedPreferences = getSharedPreferences("privateKey" , MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("privateKey", String.valueOf(privateKeyKeyString));
+        editor.apply();
     }
 
     public static HttpResponse makeRequest(String uri, String json) {
