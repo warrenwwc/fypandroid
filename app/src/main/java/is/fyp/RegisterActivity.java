@@ -2,6 +2,7 @@ package is.fyp;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
@@ -14,14 +15,19 @@ import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.GsonBuilder;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
+import org.apache.http.util.EntityUtils;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -89,23 +95,28 @@ public class RegisterActivity extends AppCompatActivity {
         Log.d("Device ID", Settings.Secure.getString(getContentResolver(),
                 Settings.Secure.ANDROID_ID));
         Log.d("sign", signature(json));
+        Log.d("json1", json);
         json = new GsonBuilder().create().toJson(reqJSON, Map.class);
-        Log.d("json", json);
+        Log.d("json2", json);
         //sendPostRequest("http://192.168.102.209/user_reg", json);
-        makeRequest("http://192.168.102.209/user_reg", json);
+        makeRequest("http://192.168.102.129/user_reg", json);
     }
 
     public static HttpResponse makeRequest(String uri, String json) {
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+        //HttpClient client = HttpClientBuilder.create().build();
+        HttpClient client = new DefaultHttpClient();
+        //CloseableHttpClient client = HttpClients.createDefault();
         try {
             HttpPost httpPost = new HttpPost(uri);
             httpPost.setEntity(new StringEntity(json));
             httpPost.setHeader("Accept", "application/json");
             httpPost.setHeader("Content-type", "application/json");
-            HttpClient client = HttpClientBuilder.create().build();
-            HttpGet request = new HttpGet(uri);
-            HttpResponse response = client.execute(request);
-            return client.execute(httpPost);
-            //return new DefaultHttpClient().execute(httpPost);
+            HttpResponse response = client.execute(httpPost);
+            HttpEntity resEntity = response.getEntity();
+            Log.d("Result", EntityUtils.toString(resEntity));
+            return response;
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (ClientProtocolException e) {
@@ -114,45 +125,6 @@ public class RegisterActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return null;
-    }
-
-    private void sendPostRequest(String url, String json) throws Exception {
-
-        URL obj = new URL(url);
-        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-        // Setting basic post request
-        con.setRequestMethod("POST");
-        con.setRequestProperty("User-Agent", USER_AGENT);
-        con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
-        con.setRequestProperty("Content-Type","application/json");
-
-        //String postJsonData = "{\"id\":5,\"countryName\":\"USA\",\"population\":8000}";
-
-        // Send post request
-        con.setDoOutput(true);
-        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-        wr.writeBytes(json);
-        wr.flush();
-        wr.close();
-
-        int responseCode = con.getResponseCode();
-        Log.d("http debug", "\nSending 'POST' request to URL : " + url);
-        Log.d("http debug", "Post Data : " + json);
-        Log.d("http debug", "Response Code : " + responseCode);
-
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(con.getInputStream()));
-        String output;
-        StringBuffer response = new StringBuffer();
-
-        while ((output = in.readLine()) != null) {
-            response.append(output);
-        }
-        in.close();
-
-        //printing result from response
-        Log.d("http debug", response.toString());
     }
 
     public void GenRSA() throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {

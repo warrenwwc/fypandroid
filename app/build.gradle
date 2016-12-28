@@ -46,5 +46,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-appindexing:8.4.0'
     compile 'org.ow2.util.base64:base64:2.0.0'
     compile 'com.github.jinahya:hex-codec:1.0.1'
+    compile project(':httpclientandroidlib-1.2.0')
 }
 
