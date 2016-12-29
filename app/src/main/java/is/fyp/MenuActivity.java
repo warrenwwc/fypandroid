@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -99,7 +100,7 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
 
     @Override
     public void onClick(View view) {
-
+        FragmentManager fragmentManager = getSupportFragmentManager();
         if (view == itemHome){
             changeFragment(new HomeFragment());
         }else if (view == itemProfile){
@@ -108,6 +109,7 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
             changeFragment(new CalendarFragment());
         }else if (view == itemSettings){
             changeFragment(new SettingsFragment());
+            getFragmentManager().beginTransaction().replace(R.id.main_fragment, new PreferencesFragment(), "fragment").setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
         }
 
         resideMenu.closeMenu();
@@ -136,6 +138,9 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
     };
 
     private void changeFragment(Fragment targetFragment){
+        if (getFragmentManager().findFragmentById(R.id.main_fragment) != null) {
+            getFragmentManager().beginTransaction().remove(getFragmentManager().findFragmentById(R.id.main_fragment)).commit();
+        }
         resideMenu.clearIgnoredViewList();
         getSupportFragmentManager()
                 .beginTransaction()
