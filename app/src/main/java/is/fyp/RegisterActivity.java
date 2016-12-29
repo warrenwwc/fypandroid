@@ -66,6 +66,8 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+import static is.fyp.Encryptor.decrypt;
+import static is.fyp.Encryptor.encrypt;
 import static is.fyp.HttpFunctions.makeRequest;
 import static org.apache.http.protocol.HTTP.USER_AGENT;
 import static org.ow2.util.base64.Base64.encode;
@@ -185,12 +187,23 @@ public class RegisterActivity extends AppCompatActivity {
         if (apiResponse.message.equals("SUCCESS_RECEIVED_CREATE_USER")){
             SharedPreferences sharedPreferences = getSharedPreferences("data" , MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString("privateKey", String.valueOf(privateKeyKeyString));
+            //editor.putString("privateKey", String.valueOf(privateKeyKeyString));
+            String encryptedKey = encrypt(pass1.getText().toString(), id.getText().toString(), String.valueOf(privateKeyKeyString));
+            editor.putString("privateKey", encryptedKey);
+            Log.d("BeforeAES", String.valueOf(privateKeyKeyString));
+            Log.d("AES", encryptedKey);
+            Log.d("DecryptAES", decrypt(pass1.getText().toString(), id.getText().toString(),encryptedKey));
             editor.putBoolean("isLogin", true);
             editor.putString("id", id.getText().toString());
             editor.putString("name", name.getText().toString());
             editor.putString("email", email.getText().toString());
-            editor.putString("password", pass1.getText().toString());
+            //editor.putString("password", pass1.getText().toString());
+
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            md.update(pass1.getText().toString().getBytes("UTF-8")); // or UTF-16 if needed
+            String passwordHash = String.valueOf(encode(md.digest()));
+            editor.putString("password", passwordHash);
+
             editor.apply();
             openSuccessAlert();
         }
