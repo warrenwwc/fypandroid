@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -22,6 +23,7 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
     private ResideMenuItem itemHistory;
     private ResideMenuItem itemTopup;
     private ResideMenuItem itemSettings;
+    SharedPreferences sharedPreferences;
     TextView logout;
 
     /**
@@ -33,6 +35,7 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
         setContentView(R.layout.main);
         mContext = this;
         setUpMenu();
+        setUpElements();
         if( savedInstanceState == null )
             changeFragment(new HomeFragment());
     }
@@ -67,7 +70,6 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
         resideMenu.addMenuItem(itemHistory, ResideMenu.DIRECTION_RIGHT);
         resideMenu.addMenuItem(itemTopup, ResideMenu.DIRECTION_RIGHT);
 
-        logout = (TextView) findViewById(R.id.logout);
 
         // You can disable a direction by setting ->
         // resideMenu.setSwipeDirectionDisable(ResideMenu.DIRECTION_RIGHT);
@@ -84,6 +86,10 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
 //                resideMenu.openMenu(ResideMenu.DIRECTION_RIGHT);
 //            }
 //        });
+    }
+
+    private void setUpElements() {
+        logout = (TextView) findViewById(R.id.logout);
     }
 
     @Override
@@ -108,7 +114,7 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
     }
 
     public void logout(View view) {
-        SharedPreferences sharedPreferences = getSharedPreferences("loginData" , MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences("data" , MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean("isLogin", false);
         editor.apply();

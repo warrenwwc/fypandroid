@@ -1,19 +1,26 @@
 package is.fyp;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.Settings;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import org.apache.http.HttpEntity;
@@ -52,11 +59,14 @@ import java.security.SignatureException;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+import static is.fyp.HttpFunctions.makeRequest;
 import static org.apache.http.protocol.HTTP.USER_AGENT;
 import static org.ow2.util.base64.Base64.encode;
 
@@ -64,6 +74,11 @@ public class RegisterActivity extends AppCompatActivity {
     private PublicKey publicKey;
     private PrivateKey privateKey;
     private GoogleApiClient client;
+    EditText name;
+    EditText id;
+    EditText email;
+    EditText pass1;
+    EditText pass2;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,15 +86,76 @@ public class RegisterActivity extends AppCompatActivity {
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        name = (EditText) findViewById(R.id.your_full_name);
+        id = (EditText) findViewById(R.id.id);
+        email = (EditText) findViewById(R.id.your_email_address);
+        pass1 = (EditText) findViewById(R.id.create_new_password);
+        pass2 = (EditText) findViewById(R.id.create_new_password2);
     }
 
     public void register(View view) throws Exception {
-        execute();
+        if (isValidName(name.getText().toString()) && isValidID(id.getText().toString()) && isValidEmail(email.getText().toString()) && isValidPassword(pass1.getText().toString(), pass2.getText().toString())) {
+            execute();
+        }
+    }
+
+    // validating name
+    private boolean isValidName(String name) {
+        if ((name != null) && (name.length() > 6)) {
+            return true;
+        }
+        Toast.makeText(this, "Invalid name", Toast.LENGTH_LONG).show();
+        return false;
+    }
+
+    // validating id
+    private boolean isValidID(String id) {
+        if ((id != null) && (id.length() > 6)) {
+            return true;
+        }
+        Toast.makeText(this, "Invalid ID", Toast.LENGTH_LONG).show();
+        return false;
+    }
+
+    // validating email id
+    private boolean isValidEmail(String email) {
+        String regExpn =
+                "^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]{1}|[\\w-]{2,}))@"
+                        +"((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+                        +"[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\."
+                        +"([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+                        +"[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|"
+                        +"([a-zA-Z]+[\\w-]+\\.)+[a-zA-Z]{2,4})$";
+
+        CharSequence inputStr = email;
+
+        Pattern pattern = Pattern.compile(regExpn,Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(inputStr);
+
+        if(matcher.matches())
+            return true;
+        else
+        {
+            Toast.makeText(this, "Invalid Email", Toast.LENGTH_LONG).show();
+            return false;
+        }
+    }
+
+    // validating password with retype password
+    private boolean isValidPassword(String pass1, String pass2) {
+        if ((pass1 != null) && (pass1.length() > 6) && (pass1.trim().contentEquals(pass2.trim()))) {
+            return true;
+        }
+        Toast.makeText(this, "Invalid password", Toast.LENGTH_LONG).show();
+        return false;
     }
 
     public void execute() throws Exception {
+        Gson gson = new Gson();
         String android_id = Settings.Secure.getString(getContentResolver(),
                 Settings.Secure.ANDROID_ID);
+        HttpResponse response;
+        APIResponse apiResponse;
         GenRSA();
         String publicKeyString = String.valueOf(encode(publicKey.getEncoded()));
         String privateKeyKeyString = String.valueOf(encode(privateKey.getEncoded()));
@@ -99,37 +175,71 @@ public class RegisterActivity extends AppCompatActivity {
         Log.d("json1", json);
         json = new GsonBuilder().create().toJson(reqJSON, Map.class);
         Log.d("json2", json);
-        //sendPostRequest("http://192.168.102.209/user_reg", json);
-        makeRequest("http://192.168.102.129/user_reg", json);
-        SharedPreferences sharedPreferences = getSharedPreferences("privateKey" , MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("privateKey", String.valueOf(privateKeyKeyString));
-        editor.apply();
+        response = makeRequest("http://192.168.102.129/user_reg", json);
+        HttpEntity resEntity = response.getEntity();
+        apiResponse = gson.fromJson(EntityUtils.toString(resEntity), APIResponse.class);
+        if (apiResponse.message == null) {
+            apiResponse.message = "";
+        }
+        Log.d("Result", apiResponse.message);
+        if (apiResponse.message.equals("SUCCESS_RECEIVED_CREATE_USER")){
+            SharedPreferences sharedPreferences = getSharedPreferences("data" , MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("privateKey", String.valueOf(privateKeyKeyString));
+            editor.putBoolean("isLogin", true);
+            editor.putString("id", id.getText().toString());
+            editor.putString("name", name.getText().toString());
+            editor.putString("email", email.getText().toString());
+            editor.putString("password", pass1.getText().toString());
+            editor.apply();
+            openSuccessAlert();
+        }
+        else {
+            openFailAlert();
+        }
+        if( response.getEntity() != null ) {
+            response.getEntity().consumeContent();
+        }
     }
 
-    public static HttpResponse makeRequest(String uri, String json) {
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-        //HttpClient client = HttpClientBuilder.create().build();
-        HttpClient client = new DefaultHttpClient();
-        //CloseableHttpClient client = HttpClients.createDefault();
-        try {
-            HttpPost httpPost = new HttpPost(uri);
-            httpPost.setEntity(new StringEntity(json));
-            httpPost.setHeader("Accept", "application/json");
-            httpPost.setHeader("Content-type", "application/json");
-            HttpResponse response = client.execute(httpPost);
-            HttpEntity resEntity = response.getEntity();
-            Log.d("Result", EntityUtils.toString(resEntity));
-            return response;
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+    private void openSuccessAlert() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(RegisterActivity.this);
+
+        alertDialogBuilder.setTitle("Registration Success");
+        alertDialogBuilder.setMessage("Click OK to continue");
+        // set positive button: Yes message
+        alertDialogBuilder.setPositiveButton("OK",new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog,int id) {
+                Intent i = new Intent(RegisterActivity.this, MenuActivity.class);
+                RegisterActivity.this.finish();
+                startActivity(i);
+            }
+        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        // show alert
+        alertDialog.show();
+    }
+
+    private void openFailAlert() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(RegisterActivity.this);
+
+        alertDialogBuilder.setTitle("Registration Failed");
+        alertDialogBuilder.setMessage("Click Continue to register again");
+        // set positive button: Yes message
+        alertDialogBuilder.setPositiveButton("Continue",new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog,int id) {
+                try {
+                    execute();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        // show alert
+        alertDialog.show();
     }
 
     public void GenRSA() throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
