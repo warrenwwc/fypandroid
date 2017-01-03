@@ -1,16 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <EditTextPreference android:title="Your Name"
-        android:key="username"
-        android:summary="Please provide your username"></EditTextPreference>
-    <CheckBoxPreference android:title="Application Updates"
-        android:defaultValue="false"
-        android:summary="This option if selected will allow the application to check for latest versions."
-        android:key="applicationUpdates" />
-    <ListPreference     android:title="Download Details"
-        android:summary="Select the kind of data that you would like to download"
-        android:key="downloadType"
-        android:defaultValue="1"
-        android:entries="@array/listArray"
-        android:entryValues="@array/listValues" />
+    <PreferenceCategory android:title="Account Setting">
+
+        <EditTextPreference android:title="Name"
+            android:key="username"></EditTextPreference>
+        <EditTextPreference
+            android:defaultValue="Default value"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Email"
+            android:key="edit_text_preference_1" />
+        <EditTextPreference
+            android:defaultValue="Default value"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Password"
+            android:key="edit_text_preference_1" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Notification Setting">
+
+        <RingtonePreference
+            android:defaultValue=""
+            android:title="Ringtone preference"
+            android:key="ringtone_preference_1" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:title="Vibrate"
+            android:key="check_box_preference_1" />
+        <CheckBoxPreference android:title="Light"
+            android:defaultValue="false"
+            android:key="applicationUpdates" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Help">
+
+        <ListPreference     android:title="FAQ"
+            android:key="downloadType"
+            android:defaultValue="1"
+            android:entries="@array/listArray"
+            android:entryValues="@array/listValues" />
+        <ListPreference     android:title="Contact Us"
+            android:key="downloadType"
+            android:defaultValue="1"
+            android:entries="@array/listArray"
+            android:entryValues="@array/listValues" />
+        <ListPreference     android:title="System Status"
+            android:key="downloadType"
+            android:defaultValue="1"
+            android:entries="@array/listArray"
+            android:entryValues="@array/listValues"
+            android:summary="online" />
+    </PreferenceCategory>
 </PreferenceScreen>

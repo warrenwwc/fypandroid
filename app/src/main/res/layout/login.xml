@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#5fb0c9"
+    android:background="#48cfad"
     android:orientation="vertical"
     android:scrollbarAlwaysDrawVerticalTrack="true">
 
@@ -43,8 +43,8 @@
                 <EditText
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/icon_home"
-                    android:drawableTint="#FF4081"
+                    android:drawableLeft="@android:drawable/ic_menu_send"
+                    android:drawableTint="#48cfad"
                     android:singleLine="true"
                     android:hint="User ID"
                     android:id="@+id/signin_id"
@@ -60,8 +60,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:singleLine="true"
-                    android:drawableLeft="@drawable/icon_home"
-                    android:drawableTint="#FF4081"
+                    android:drawableLeft="@android:drawable/ic_menu_send"
+                    android:drawableTint="#48cfad"
                     android:id="@+id/signin_pw"
                     android:hint="Password"
                     android:inputType="textPassword" />
@@ -79,7 +79,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="22dp"
-                android:background="#d67601"
+                android:background="#48CFAD"
                 android:text="Sign in"
                 android:onClick="onClick"
                 android:textAllCaps="false"
