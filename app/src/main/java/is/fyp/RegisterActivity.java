@@ -90,10 +90,10 @@ public class RegisterActivity extends AppCompatActivity {
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
         name = (EditText) findViewById(R.id.your_full_name);
         id = (EditText) findViewById(R.id.id);
-        email = (EditText) findViewById(R.id.your_email_address);
-        pass1 = (EditText) findViewById(R.id.create_new_password);
-        pass2 = (EditText) findViewById(R.id.create_new_password2);
-    }
+            email = (EditText) findViewById(R.id.your_email_address);
+            pass1 = (EditText) findViewById(R.id.create_new_password);
+            pass2 = (EditText) findViewById(R.id.create_new_password2);
+        }
 
     public void register(View view) throws Exception {
         if (isValidName(name.getText().toString()) && isValidID(id.getText().toString()) && isValidEmail(email.getText().toString()) && isValidPassword(pass1.getText().toString(), pass2.getText().toString())) {

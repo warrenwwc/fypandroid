@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:theme="?attr/actionBarTheme"
+        android:minHeight="?attr/actionBarSize"
+        android:id="@+id/toolbar" />
+
+
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content" android:layout_height="match_parent" android:columnCount="4" android:layout_gravity="center" android:layout_marginTop="10dp">
+
+
+
+    <TextView
+        android:text="Enter Top up amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView"
+        android:layout_column="0"
+        android:layout_row="0"
+        android:layout_columnSpan="4"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/editText2"
+        android:layout_row="1"
+        android:layout_column="0"
+        android:layout_columnSpan="4"
+        android:layout_gravity="fill_horizontal"
+        android:singleLine="true"
+        android:selectAllOnFocus="true"
+        android:text="Amount" />
+
+    <Button
+        android:text="+ $10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/button" />
+
+    <Button
+        android:text="+ $50"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/button2" />
+
+    <Button
+        android:text="+ $100"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/button3" />
+
+    <Button
+        android:text="+ $500"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/button4" />
+
+    <Button
+        android:text="Top up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/button5"
+        android:layout_row="3"
+        android:layout_column="0"
+        android:layout_columnSpan="4"
+        android:layout_gravity="center"
+        style="@style/Widget.AppCompat.Button.Colored"/>
+</GridLayout>
+
+</LinearLayout>
