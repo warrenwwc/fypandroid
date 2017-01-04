@@ -110,8 +110,6 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
         }else if (view == itemSettings){
             changeFragment(new SettingsFragment());
             getFragmentManager().beginTransaction().replace(R.id.main_fragment, new PreferencesFragment(), "fragment").setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
-        }else if (view == itemTopup){
-            changeFragment(new TopupFragment());
         }
 
         resideMenu.closeMenu();
@@ -139,7 +137,7 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
         }
     };
 
-    public void changeFragment(Fragment targetFragment){
+    private void changeFragment(Fragment targetFragment){
         if (getFragmentManager().findFragmentById(R.id.main_fragment) != null) {
             getFragmentManager().beginTransaction().remove(getFragmentManager().findFragmentById(R.id.main_fragment)).commit();
         }

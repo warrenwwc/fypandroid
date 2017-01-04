@@ -2,14 +2,10 @@ package is.fyp;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-
 import is.fyp.ResideMenu;
 
 /**
@@ -31,24 +27,8 @@ public class HomeFragment extends Fragment {
     }
 
     private void setUpViews() {
-        final MenuActivity parentActivity = (MenuActivity) getActivity();
+        MenuActivity parentActivity = (MenuActivity) getActivity();
         resideMenu = parentActivity.getResideMenu();
-
-        ImageView img = (ImageView) parentView.findViewById(R.id.imageView2);
-        img.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                parentActivity.changeFragment(new PayFragment());
-            }
-        });
-
-        ImageView img2 = (ImageView) parentView.findViewById(R.id.imageView3);
-        img2.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                parentActivity.changeFragment(new TransferFragment());
-            }
-        });
-
-
 
 //        parentView.findViewById(R.id.btn_open_menu).setOnClickListener(new View.OnClickListener() {
 //            @Override

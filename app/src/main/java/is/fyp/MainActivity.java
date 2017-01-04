@@ -74,8 +74,7 @@ public class MainActivity extends AppCompatActivity{
                 md.update(password.getText().toString().trim().getBytes("UTF-8")); // or UTF-16 if needed
                 String passwordHash = String.valueOf(encode(md.digest()));
 
-               // if (id.getText().toString().trim().contentEquals(sharedPreferences.getString("id", "")) && (passwordHash.contentEquals(sharedPreferences.getString("password", "")))) {
-                if(1==1) {
+                if (id.getText().toString().trim().contentEquals(sharedPreferences.getString("id", "")) && (passwordHash.contentEquals(sharedPreferences.getString("password", "")))) {
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putBoolean("isLogin", true);
                     editor.apply();
