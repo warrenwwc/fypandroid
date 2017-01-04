@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -21,24 +22,49 @@ public class CalendarFragment extends Fragment {
     private View parentView;
     private ListView listView;
 
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         parentView = inflater.inflate(R.layout.calendar, container, false);
         listView   = (ListView) parentView.findViewById(R.id.listView);
+
         initView();
         return parentView;
     }
 
     private void initView(){
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+        /*ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
                 getActivity(),
                 android.R.layout.simple_list_item_1,
-                getCalendarData());
-        listView.setAdapter(arrayAdapter);
+                getCalendarData());*/
+        final String ID_TITLE = "TITLE", ID_SUBTITLE = "SUBTITLE";
+
+        ArrayList<HashMap<String,String>> myListData = new ArrayList<HashMap<String,String>>();
+        String[] titles = new String[]{ "$ 10" , "$ 20", "$ 30" };
+        String[] subtitles = new String[]{ "1 day ago" , "1 day ago", "1 day ago" };
+
+        for( int i=0;i<titles.length ; ++i) {
+            HashMap<String,String> item = new HashMap<String,String>();
+            item.put(ID_TITLE,titles[i]);
+            item.put(ID_SUBTITLE,subtitles[i]);
+            myListData.add(item);
+        }
+
+        listView.setAdapter(
+                new SimpleAdapter(
+                        this.getContext(),
+                        myListData ,
+                        android.R.layout.simple_list_item_2,
+                        new String[] { "TITLE", "SUBTITLE" },
+                        new int[] { android.R.id.text1, android.R.id.text2 }
+                )
+        );
+        /*listView.setAdapter(arrayAdapter);*/
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(getActivity(), "Clicked item!", Toast.LENGTH_LONG).show();
+                /*Toast.makeText(getActivity(), "Clicked item!", Toast.LENGTH_LONG).show();*/
             }
         });
     }
