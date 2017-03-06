@@ -1,5 +1,6 @@
 package is.fyp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -37,7 +38,9 @@ public class HomeFragment extends Fragment {
         ImageView img = (ImageView) parentView.findViewById(R.id.imageView2);
         img.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                parentActivity.changeFragment(new PayFragment());
+                //parentActivity.changeFragment(new PayFragment());
+                Intent i = new Intent(getActivity(), NFCActivity.class);
+                startActivity(i);
             }
         });
 

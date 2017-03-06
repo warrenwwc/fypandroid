@@ -177,7 +177,7 @@ public class RegisterActivity extends AppCompatActivity {
         Log.d("json1", json);
         json = new GsonBuilder().create().toJson(reqJSON, Map.class);
         Log.d("json2", json);
-        response = makeRequest("http://192.168.102.129/user_reg", json);
+        response = makeRequest("http://192.168.254.128/user_reg", json);
         HttpEntity resEntity = response.getEntity();
         apiResponse = gson.fromJson(EntityUtils.toString(resEntity), APIResponse.class);
         if (apiResponse.message == null) {
