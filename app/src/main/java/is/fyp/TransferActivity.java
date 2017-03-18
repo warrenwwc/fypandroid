@@ -1,8 +1,10 @@
 package is.fyp;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -38,19 +40,25 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
-public class NFCActivity extends Activity implements NfcAdapter.CreateNdefMessageCallback {
+public class TransferActivity extends Activity implements NfcAdapter.CreateNdefMessageCallback {
 
-    private EditText mEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_nfc);
-        mEditText = (EditText) findViewById(R.id.edit_text_field);
+        setContentView(R.layout.activity_transfer);
+
+        Button back = (Button) findViewById(R.id.back);
+        back.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent i = new Intent(TransferActivity.this, MenuActivity.class);
+                startActivity(i);
+            }
+        });
 
         NfcAdapter mAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mAdapter == null) {
-            mEditText.setText("Sorry this device does not have NFC.");
+            Toast.makeText(this, "Sorry this device does not have NFC.", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -59,6 +67,7 @@ public class NFCActivity extends Activity implements NfcAdapter.CreateNdefMessag
         }
 
         mAdapter.setNdefPushMessageCallback(this, this);
+
     }
 
     /**
@@ -68,8 +77,9 @@ public class NFCActivity extends Activity implements NfcAdapter.CreateNdefMessag
      */
     @Override
     public NdefMessage createNdefMessage(NfcEvent nfcEvent) {
-        String message = mEditText.getText().toString();
-        NdefRecord ndefRecord = NdefRecord.createMime("text/plain", transData(message));
+        Intent myIntent = getIntent(); // gets the previously created intent
+        String amt = myIntent.getStringExtra("amount");
+        NdefRecord ndefRecord = NdefRecord.createMime("text/plain", transData(amt));
         NdefMessage ndefMessage = new NdefMessage(ndefRecord);
         return ndefMessage;
     }
@@ -79,6 +89,25 @@ public class NFCActivity extends Activity implements NfcAdapter.CreateNdefMessag
         String publicKey = String.valueOf(sharedPreferences.getBoolean("isLogin", false));
         String rtnMeg = publicKey + "," + amount;
         return rtnMeg.getBytes();
+    }
+
+    private void openSuccessAlert() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(TransferActivity.this);
+
+        alertDialogBuilder.setTitle("Registration Success");
+        alertDialogBuilder.setMessage("Click OK to continue");
+        // set positive button: Yes message
+        alertDialogBuilder.setPositiveButton("OK",new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog,int id) {
+                Intent i = new Intent(TransferActivity.this, MenuActivity.class);
+                TransferActivity.this.finish();
+                startActivity(i);
+            }
+        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        // show alert
+        alertDialog.show();
     }
 }
 

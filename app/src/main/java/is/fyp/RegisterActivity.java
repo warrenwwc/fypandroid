@@ -189,7 +189,9 @@ public class RegisterActivity extends AppCompatActivity {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             //editor.putString("privateKey", String.valueOf(privateKeyKeyString));
             String encryptedKey = encrypt(pass1.getText().toString(), id.getText().toString(), String.valueOf(privateKeyKeyString));
-            editor.putString("privateKey", encryptedKey);
+            //editor.putString("privateKey", encryptedKey);
+            editor.putString("privateKey", privateKeyKeyString);
+            editor.putString("publicKey", publicKeyString);
             Log.d("BeforeAES", String.valueOf(privateKeyKeyString));
             Log.d("AES", encryptedKey);
             Log.d("DecryptAES", decrypt(pass1.getText().toString(), id.getText().toString(),encryptedKey));

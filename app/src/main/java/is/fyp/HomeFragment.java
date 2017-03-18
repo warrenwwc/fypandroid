@@ -38,9 +38,9 @@ public class HomeFragment extends Fragment {
         ImageView img = (ImageView) parentView.findViewById(R.id.imageView2);
         img.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //parentActivity.changeFragment(new PayFragment());
-                Intent i = new Intent(getActivity(), NFCActivity.class);
-                startActivity(i);
+                parentActivity.changeFragment(new PayFragment());
+//                Intent i = new Intent(getActivity(), NFCActivity.class);
+//                startActivity(i);
             }
         });
 
