@@ -6,11 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.provider.Settings;
-import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -21,29 +18,8 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
-import org.apache.http.util.EntityUtils;
-
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -53,12 +29,9 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
-import java.security.Security;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.util.Formatter;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -66,10 +39,13 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+import is.fyp.api.Helper;
+import is.fyp.api.RegisterTask;
+import is.fyp.api.requests.RegisterRequest;
+import is.fyp.api.responses.BaseResponse;
+
 import static is.fyp.Encryptor.decrypt;
 import static is.fyp.Encryptor.encrypt;
-import static is.fyp.HttpFunctions.makeRequest;
-import static org.apache.http.protocol.HTTP.USER_AGENT;
 import static org.ow2.util.base64.Base64.encode;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -154,13 +130,65 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public void execute() throws Exception {
+        GenRSA();
+
+        Helper helper = new Helper();
+        String android_id = Settings.Secure.getString(getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+
+        String mintPK = helper.getPublicKey();
+        final String publicKeyString = String.valueOf(encode(publicKey.getEncoded()));
+        final String privateKeyKeyString = String.valueOf(encode(privateKey.getEncoded()));
+
+        RegisterRequest request = new RegisterRequest();
+        request.setFaddr(publicKeyString);
+        request.setTaddr(mintPK);
+        request.setDevice_id(android_id);
+        helper.sign(request, privateKey);
+
+        new RegisterTask(request) {
+            protected void onPostExecute(BaseResponse result) {
+                if(!result.hasError() && result.message.equals("SUCCESS_CREATE_TICKET")) {
+                    SharedPreferences sharedPreferences = getSharedPreferences("data" , MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("privateKey", privateKeyKeyString);
+                    editor.putString("publicKey", publicKeyString);
+                    editor.putBoolean("isLogin", true);
+                    editor.putString("id", id.getText().toString());
+                    editor.putString("name", name.getText().toString());
+                    editor.putString("email", email.getText().toString());
+
+                    try {
+                        MessageDigest md = MessageDigest.getInstance("SHA-256");
+                        md.update(pass1.getText().toString().getBytes("UTF-8")); // or UTF-16 if needed
+                        String passwordHash = String.valueOf(encode(md.digest()));
+                        editor.putString("password", passwordHash);
+                    } catch (NoSuchAlgorithmException e) {
+                        e.printStackTrace();
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+
+                    editor.apply();
+                    openSuccessAlert();
+                    Log.d("result", result.message);
+                } else {
+                    openFailAlert();
+                    Log.d("result", result.error);
+                }
+
+            }
+        }.execute();
+    }
+
+    /*public void execute() throws Exception {
         String mintPK = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxf17kB0kRznB/NH9/bokZ635UrIsO7q8NekNLUqxJDxCrCoesvqSz0Wln9tCPtfLGpwK9AXXlOtuSjxlx+yxsbIm0eNoV6TBvBnVAHHB2kehJmq/s1LYjVCbw9zQcfJBDw1K+BXirG6ExHwixxV6I8nM/JStDjqM8jUVeX3HkFqmXMKrwqloeKQ/USRHC4l11uZ8WEUQTyFloKpafGv1c2PRbLDt5UGpIxos/9hfHmpvbDA/13/IVTf0oeYLURP5+tYIVdx2tHnyKypNnZgdqYfHIrMv2bRECAsZquBOEyTZKombtIjMunafoxXn7tPAIUrG02uOnJB9UDCIxA3eZQIDAQAB";
 
         Gson gson = new Gson();
         String android_id = Settings.Secure.getString(getContentResolver(),
                 Settings.Secure.ANDROID_ID);
         HttpResponse response;
-        APIResponse apiResponse;
+        BaseResponse apiResponse;
         GenRSA();
         String publicKeyString = String.valueOf(encode(publicKey.getEncoded()));
         String privateKeyKeyString = String.valueOf(encode(privateKey.getEncoded()));
@@ -171,7 +199,7 @@ public class RegisterActivity extends AppCompatActivity {
         reqJSON.put("type", "RU");
         reqJSON.put("device_id", android_id);
         String json = new GsonBuilder().create().toJson(reqJSON, Map.class);
-        String sign = signature(json);
+        String sign = sign(json);
         reqJSON.put("sign", sign);
         Log.d("sign", sign);
         Log.d("public", String.valueOf(publicKeyString));
@@ -183,12 +211,12 @@ public class RegisterActivity extends AppCompatActivity {
         Log.d("json2", json);
         response = makeRequest("https://mint1.coms.hk/api", json);
         HttpEntity resEntity = response.getEntity();
-        apiResponse = gson.fromJson(EntityUtils.toString(resEntity), APIResponse.class);
+        apiResponse = gson.fromJson(EntityUtils.toString(resEntity), BaseResponse.class);
         if (apiResponse.message == null) {
             apiResponse.message = "";
         }
         Log.d("Result", apiResponse.message);
-        if (apiResponse.message.equals("SUCCESS_RECEIVED_CREATE_USER")){
+        if (apiResponse.message.equals("SUCCESS_CREATE_TICKET")){
             SharedPreferences sharedPreferences = getSharedPreferences("data" , MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             //editor.putString("privateKey", String.valueOf(privateKeyKeyString));
@@ -219,7 +247,7 @@ public class RegisterActivity extends AppCompatActivity {
         if( response.getEntity() != null ) {
             response.getEntity().consumeContent();
         }
-    }
+    }*/
 
     private void openSuccessAlert() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(RegisterActivity.this);
