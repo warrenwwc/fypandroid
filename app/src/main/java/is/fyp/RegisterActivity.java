@@ -17,7 +17,7 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.gson.Gson;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
@@ -44,8 +44,6 @@ import is.fyp.api.RegisterTask;
 import is.fyp.api.requests.RegisterRequest;
 import is.fyp.api.responses.BaseResponse;
 
-import static is.fyp.Encryptor.decrypt;
-import static is.fyp.Encryptor.encrypt;
 import static org.ow2.util.base64.Base64.encode;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -133,8 +131,10 @@ public class RegisterActivity extends AppCompatActivity {
         GenRSA();
 
         Helper helper = new Helper();
-        String android_id = Settings.Secure.getString(getContentResolver(),
-                Settings.Secure.ANDROID_ID);
+        //String android_id = Settings.Secure.getString(getContentResolver(),
+        //        Settings.Secure.ANDROID_ID);
+        String android_id = FirebaseInstanceId.getInstance().getToken();
+        Log.d("Token: ",  android_id);
 
         String mintPK = helper.getPublicKey();
         final String publicKeyString = String.valueOf(encode(publicKey.getEncoded()));
