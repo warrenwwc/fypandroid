@@ -96,9 +96,10 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public void register(View view) throws Exception {
-        if (isValidName(name.getText().toString()) && isValidID(id.getText().toString()) && isValidEmail(email.getText().toString()) && isValidPassword(pass1.getText().toString(), pass2.getText().toString())) {
-            execute();
-        }
+//        if (isValidName(name.getText().toString()) && isValidID(id.getText().toString()) && isValidEmail(email.getText().toString()) && isValidPassword(pass1.getText().toString(), pass2.getText().toString())) {
+//            execute();
+//        }
+        execute();
     }
 
     // validating name
@@ -153,6 +154,8 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public void execute() throws Exception {
+        String mintPK = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxf17kB0kRznB/NH9/bokZ635UrIsO7q8NekNLUqxJDxCrCoesvqSz0Wln9tCPtfLGpwK9AXXlOtuSjxlx+yxsbIm0eNoV6TBvBnVAHHB2kehJmq/s1LYjVCbw9zQcfJBDw1K+BXirG6ExHwixxV6I8nM/JStDjqM8jUVeX3HkFqmXMKrwqloeKQ/USRHC4l11uZ8WEUQTyFloKpafGv1c2PRbLDt5UGpIxos/9hfHmpvbDA/13/IVTf0oeYLURP5+tYIVdx2tHnyKypNnZgdqYfHIrMv2bRECAsZquBOEyTZKombtIjMunafoxXn7tPAIUrG02uOnJB9UDCIxA3eZQIDAQAB";
+
         Gson gson = new Gson();
         String android_id = Settings.Secure.getString(getContentResolver(),
                 Settings.Secure.ANDROID_ID);
@@ -164,20 +167,21 @@ public class RegisterActivity extends AppCompatActivity {
         Map<String, String> reqJSON = new HashMap<String, String>();
 
         reqJSON.put("faddr", publicKeyString);
-        reqJSON.put("taddr", privateKeyKeyString);
+        reqJSON.put("taddr", mintPK);
         reqJSON.put("type", "RU");
         reqJSON.put("device_id", android_id);
         String json = new GsonBuilder().create().toJson(reqJSON, Map.class);
-        reqJSON.put("sign", signature(json));
+        String sign = signature(json);
+        reqJSON.put("sign", sign);
+        Log.d("sign", sign);
         Log.d("public", String.valueOf(publicKeyString));
         Log.d("private", String.valueOf(privateKeyKeyString));
         Log.d("Device ID", Settings.Secure.getString(getContentResolver(),
                 Settings.Secure.ANDROID_ID));
-        Log.d("sign", signature(json));
         Log.d("json1", json);
         json = new GsonBuilder().create().toJson(reqJSON, Map.class);
         Log.d("json2", json);
-        response = makeRequest("http://192.168.254.128/user_reg", json);
+        response = makeRequest("https://mint1.coms.hk/api", json);
         HttpEntity resEntity = response.getEntity();
         apiResponse = gson.fromJson(EntityUtils.toString(resEntity), APIResponse.class);
         if (apiResponse.message == null) {
