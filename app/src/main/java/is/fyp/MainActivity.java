@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         sharedPreferences = getSharedPreferences("data" , MODE_PRIVATE);
+        Log.d("fcm:", FirebaseInstanceId.getInstance().getToken());
         boolean isLogin = sharedPreferences.getBoolean("isLogin", false);
         if (isLogin) {
             Intent i = new Intent(MainActivity.this, MenuActivity.class);
