@@ -9,8 +9,17 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
@@ -23,6 +32,9 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Formatter;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 import is.fyp.api.contracts.Signable;
 import is.fyp.api.requests.BaseRequest;
@@ -39,6 +51,8 @@ import okhttp3.Response;
 
 public class Helper {
 
+    private volatile static Helper instance;
+
     private OkHttpClient client;
 
     private Gson gson;
@@ -51,9 +65,29 @@ public class Helper {
 
     protected String service;
 
-    public Helper() {
+    private Helper() {
         this.client = new OkHttpClient();
-        this.gson = new Gson();
+        this.gson = new GsonBuilder()
+                .registerTypeAdapter(
+                        new TypeToken<TreeMap<String, Object>>(){}.getType(),
+                        new JsonDeserializer<TreeMap<String, Object>>() {
+                            @Override
+                            public TreeMap<String, Object> deserialize(
+                                    JsonElement json, Type typeOfT,
+                                    JsonDeserializationContext context) throws JsonParseException {
+
+
+                                TreeMap<String, Object> treeMap = new TreeMap<>();
+                                JsonObject jsonObject = json.getAsJsonObject();
+                                Set<Map.Entry<String, JsonElement>> entrySet = jsonObject.entrySet();
+                                for (Map.Entry<String, JsonElement> entry : entrySet) {
+                                    treeMap.put(entry.getKey(), entry.getValue());
+                                }
+                                return treeMap;
+                            }
+                        }
+                ).create();
+
         this.endpoint = "https://mint1.coms.hk/";
         this.service = "api";
         this.publicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxf17kB0kRznB/NH9/bokZ635UrIsO7q8NekNLUqxJDxCrCoesvqSz0Wln9tCPtfLGpwK9AXXlOtuSjxlx+yxsbIm0eNoV6TBvBnVAHHB2kehJmq/s1LYjVCbw9zQcfJBDw1K+BXirG6ExHwixxV6I8nM/JStDjqM8jUVeX3HkFqmXMKrwqloeKQ/USRHC4l11uZ8WEUQTyFloKpafGv1c2PRbLDt5UGpIxos/9hfHmpvbDA/13/IVTf0oeYLURP5+tYIVdx2tHnyKypNnZgdqYfHIrMv2bRECAsZquBOEyTZKombtIjMunafoxXn7tPAIUrG02uOnJB9UDCIxA3eZQIDAQAB";
@@ -61,8 +95,39 @@ public class Helper {
         this.privateKey = "";
     }
 
+    public static Helper getInstance() {
+        if(instance == null) {
+            synchronized (Helper.class) {
+                if(instance == null) {
+                    instance = new Helper();
+                }
+            }
+        }
+        return instance;
+    }
+
     public String getPublicKey() {
         return this.publicKey;
+    }
+
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
+    }
+
+    public String getPrivateKey() {
+        return privateKey;
+    }
+
+    public void setPrivateKey(String privateKey) {
+        this.privateKey = privateKey;
+    }
+
+    public String getService() {
+        return service;
+    }
+
+    public void setService(String service) {
+        this.service = service;
     }
 
     public void sign(Signable request) {
@@ -85,6 +150,10 @@ public class Helper {
 
     public void sign(Signable request, PrivateKey privateKey) throws NoSuchProviderException, SignatureException {
         String json = this.gson.toJson(request);
+        // sometimes it wont sort ...
+        Type typeToken = new TypeToken<TreeMap<String, Object>>(){}.getType();
+        TreeMap<String, Object> map = this.gson.fromJson(json, typeToken);
+        json = this.gson.toJson(map);
         byte[] data = json.getBytes();
         byte[] sign;
         Formatter formatter = new Formatter();

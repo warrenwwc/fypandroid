@@ -129,7 +129,7 @@ public class RegisterActivity extends AppCompatActivity {
     public void execute() throws Exception {
         GenRSA();
 
-        Helper helper = new Helper();
+        Helper helper = Helper.getInstance();
         //String android_id = Settings.Secure.getString(getContentResolver(),
         //        Settings.Secure.ANDROID_ID);
         String android_id = FirebaseInstanceId.getInstance().getToken();

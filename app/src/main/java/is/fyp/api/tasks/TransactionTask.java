@@ -1,8 +1,11 @@
 package is.fyp.api.tasks;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
@@ -13,6 +16,7 @@ import java.util.List;
 import is.fyp.api.Coin;
 import is.fyp.api.Helper;
 import is.fyp.api.requests.TransactionRequest;
+import is.fyp.api.responses.BaseResponse;
 
 /**
  * Created by Jason on 5/4/2017.
@@ -28,7 +32,11 @@ public class TransactionTask extends AsyncTask<Void, Void, List<Coin>> {
 
     @Override
     protected List<Coin> doInBackground(Void ...param) {
-        Helper helper = new Helper();
+        if(android.os.Debug.isDebuggerConnected())
+            android.os.Debug.waitForDebugger();
+
+        Helper helper = Helper.getInstance();
+        helper.setService("record");
         Gson gson = new Gson();
         String json;
         String response;
@@ -38,8 +46,16 @@ public class TransactionTask extends AsyncTask<Void, Void, List<Coin>> {
 
         try {
             response = helper.request(json);
-            Type coinListType = new TypeToken<ArrayList<Coin>>(){}.getType();
 
+            try {
+                BaseResponse baseResponse = helper.transform(response);
+                if(baseResponse.hasError()) {
+                    return coinList;
+                }
+            } catch (JsonParseException ex) {
+            }
+
+            Type coinListType = new TypeToken<ArrayList<Coin>>(){}.getType();
             coinList = gson.fromJson(response, coinListType);
         } catch (IOException e) {
             return coinList;

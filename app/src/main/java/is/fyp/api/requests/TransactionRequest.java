@@ -6,11 +6,13 @@ package is.fyp.api.requests;
 
 public class TransactionRequest extends BaseRequest {
 
-    private int limit = 0;
-    private int offset = 100;
+    private int limit;
+    private int offset;
 
     public TransactionRequest() {
         this.setType("RR");
+        this.setLimit(100);
+        this.setOffset(0);
     }
 
     public int getLimit() {

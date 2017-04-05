@@ -24,7 +24,7 @@ public class RegisterTask extends AsyncTask<Void, Void, BaseResponse> {
 
     @Override
     protected BaseResponse doInBackground(Void ...param) {
-        Helper helper = new Helper();
+        Helper helper = Helper.getInstance();
         Gson gson = new Gson();
         String json;
         BaseResponse response;

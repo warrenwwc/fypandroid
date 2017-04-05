@@ -20,7 +20,7 @@ public class EndorseTask extends AsyncTask<Coin, Void, BaseResponse> {
 
     @Override
     protected BaseResponse doInBackground(Coin ...coins) {
-        Helper helper = new Helper();
+        Helper helper = Helper.getInstance();
         Gson gson = new Gson();
         String json;
         BaseResponse response;
