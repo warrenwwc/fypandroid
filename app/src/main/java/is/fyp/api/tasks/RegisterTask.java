@@ -1,4 +1,4 @@
-package is.fyp.api;
+package is.fyp.api.tasks;
 
 import android.os.AsyncTask;
 
@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 
 import java.io.IOException;
 
+import is.fyp.api.Helper;
 import is.fyp.api.requests.RegisterRequest;
 import is.fyp.api.responses.BaseResponse;
 

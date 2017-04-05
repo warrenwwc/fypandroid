@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -40,7 +39,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 import is.fyp.api.Helper;
-import is.fyp.api.RegisterTask;
+import is.fyp.api.tasks.RegisterTask;
 import is.fyp.api.requests.RegisterRequest;
 import is.fyp.api.responses.BaseResponse;
 
@@ -181,74 +180,6 @@ public class RegisterActivity extends AppCompatActivity {
         }.execute();
     }
 
-    /*public void execute() throws Exception {
-        String mintPK = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxf17kB0kRznB/NH9/bokZ635UrIsO7q8NekNLUqxJDxCrCoesvqSz0Wln9tCPtfLGpwK9AXXlOtuSjxlx+yxsbIm0eNoV6TBvBnVAHHB2kehJmq/s1LYjVCbw9zQcfJBDw1K+BXirG6ExHwixxV6I8nM/JStDjqM8jUVeX3HkFqmXMKrwqloeKQ/USRHC4l11uZ8WEUQTyFloKpafGv1c2PRbLDt5UGpIxos/9hfHmpvbDA/13/IVTf0oeYLURP5+tYIVdx2tHnyKypNnZgdqYfHIrMv2bRECAsZquBOEyTZKombtIjMunafoxXn7tPAIUrG02uOnJB9UDCIxA3eZQIDAQAB";
-
-        Gson gson = new Gson();
-        String android_id = Settings.Secure.getString(getContentResolver(),
-                Settings.Secure.ANDROID_ID);
-        HttpResponse response;
-        BaseResponse apiResponse;
-        GenRSA();
-        String publicKeyString = String.valueOf(encode(publicKey.getEncoded()));
-        String privateKeyKeyString = String.valueOf(encode(privateKey.getEncoded()));
-        Map<String, String> reqJSON = new HashMap<String, String>();
-
-        reqJSON.put("faddr", publicKeyString);
-        reqJSON.put("taddr", mintPK);
-        reqJSON.put("type", "RU");
-        reqJSON.put("device_id", android_id);
-        String json = new GsonBuilder().create().toJson(reqJSON, Map.class);
-        String sign = sign(json);
-        reqJSON.put("sign", sign);
-        Log.d("sign", sign);
-        Log.d("public", String.valueOf(publicKeyString));
-        Log.d("private", String.valueOf(privateKeyKeyString));
-        Log.d("Device ID", Settings.Secure.getString(getContentResolver(),
-                Settings.Secure.ANDROID_ID));
-        Log.d("json1", json);
-        json = new GsonBuilder().create().toJson(reqJSON, Map.class);
-        Log.d("json2", json);
-        response = makeRequest("https://mint1.coms.hk/api", json);
-        HttpEntity resEntity = response.getEntity();
-        apiResponse = gson.fromJson(EntityUtils.toString(resEntity), BaseResponse.class);
-        if (apiResponse.message == null) {
-            apiResponse.message = "";
-        }
-        Log.d("Result", apiResponse.message);
-        if (apiResponse.message.equals("SUCCESS_CREATE_TICKET")){
-            SharedPreferences sharedPreferences = getSharedPreferences("data" , MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            //editor.putString("privateKey", String.valueOf(privateKeyKeyString));
-            String encryptedKey = encrypt(pass1.getText().toString(), id.getText().toString(), String.valueOf(privateKeyKeyString));
-            //editor.putString("privateKey", encryptedKey);
-            editor.putString("privateKey", privateKeyKeyString);
-            editor.putString("publicKey", publicKeyString);
-            Log.d("BeforeAES", String.valueOf(privateKeyKeyString));
-            Log.d("AES", encryptedKey);
-            Log.d("DecryptAES", decrypt(pass1.getText().toString(), id.getText().toString(),encryptedKey));
-            editor.putBoolean("isLogin", true);
-            editor.putString("id", id.getText().toString());
-            editor.putString("name", name.getText().toString());
-            editor.putString("email", email.getText().toString());
-            //editor.putString("password", pass1.getText().toString());
-
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            md.update(pass1.getText().toString().getBytes("UTF-8")); // or UTF-16 if needed
-            String passwordHash = String.valueOf(encode(md.digest()));
-            editor.putString("password", passwordHash);
-
-            editor.apply();
-            openSuccessAlert();
-        }
-        else {
-            openFailAlert();
-        }
-        if( response.getEntity() != null ) {
-            response.getEntity().consumeContent();
-        }
-    }*/
-
     private void openSuccessAlert() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(RegisterActivity.this);
 
@@ -297,35 +228,6 @@ public class RegisterActivity extends AppCompatActivity {
         KeyPair kp = kpg.genKeyPair();
         publicKey = kp.getPublic();
         privateKey = kp.getPrivate();
-    }
-
-    public String signature(String base) throws NoSuchProviderException, SignatureException {
-        try {
-            Signature signature = Signature.getInstance("SHA256withRSA", "BC");
-            signature.initSign(privateKey, new SecureRandom());
-            byte[] message = base.getBytes();
-            signature.update(message);
-            byte[] sigBytes = signature.sign();
-
-            Signature signature1 = Signature.getInstance("SHA256withRSA", "BC");
-            signature1.initVerify(publicKey);
-            signature1.update(message);
-
-            boolean result = signature1.verify(sigBytes);
-            Log.d("result", String.valueOf(result));
-            if (result) {
-                Formatter formatter = new Formatter();
-                for (byte b : sigBytes) {
-                    formatter.format("%02x", b);
-                }
-                String hex = formatter.toString();
-                return hex;
-            }
-
-        } catch (NoSuchAlgorithmException | NoSuchProviderException | SignatureException | InvalidKeyException ex) {
-
-        }
-        return "";
     }
 
     /**
