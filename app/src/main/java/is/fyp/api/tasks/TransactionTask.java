@@ -50,8 +50,9 @@ public class TransactionTask extends AsyncTask<Void, Void, List<Coin>> {
             try {
                 BaseResponse baseResponse = helper.transform(response);
                 if(baseResponse.hasError()) {
-                    return coinList;
+                    Log.d("error", baseResponse.error);
                 }
+                return coinList;
             } catch (JsonParseException ex) {
             }
 

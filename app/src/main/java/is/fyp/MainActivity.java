@@ -36,51 +36,25 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Helper helper = Helper.getInstance();
         sharedPreferences = getSharedPreferences("data" , MODE_PRIVATE);
+        if (sharedPreferences.contains("privateKey") && !sharedPreferences.getString("privateKey", "").isEmpty()) {
+            helper.setPrivateKey(sharedPreferences.getString("privateKey", ""));
+        }
+
         //Log.d("fcm:", FirebaseInstanceId.getInstance().getToken()); null point wtf
 
-        Helper helper = Helper.getInstance();
-        helper.setPrivateKey(("MIIEowIBAAKCAQEAw3ioYc1r61s2O/8fZ++JdPkY9VtCGk7VUealTpvBOnnkQkKz\n" +
-                "/j99tJEFDAbWVyyh8AtHJQxK/Vq1xtVZsSNEMglijhAl3YkbahuDq2j1AjBMPqcw\n" +
-                "URzi7flfNCov2HNAnE8FFeYVIabTL3FKnb0u2lNSCE228dPwTAYV6b9cNg2hrFZc\n" +
-                "Rqc8UY0+WBDQ0tjHAlSPMi6VrAAecpZtBeTeEqI/YsX8b1C5WEWDL7GvOSkDU5kq\n" +
-                "vbKuQ/NZKSkxJs8fmM6XbtIs3mPRnJuJAgipEi6DOhDIRmH2TCvmHmGZMFljR5OI\n" +
-                "P1y2b9pCANmwNE3hTqdgHGdNe4egOL3p4jlL9wIDAQABAoIBADT7q4h3Cd2Np7Gz\n" +
-                "gWvGvdd6/Yzj45MF80Rz5DLefQ3ApGJhejBcPVKITHnqEIcojexm4i3kmx75S3RN\n" +
-                "uDYPfRii+pfPQLQ/ybKFKrd3h5HETaZd4vbZgZlHksqs9LMS6lxz/sjkyK2KbovZ\n" +
-                "hYQkF2MOWpntlr0N2YCB1ca6G+B6b8WwUkbZSz+mX756KRQy0/Kdvu5/NsnLhkQx\n" +
-                "pWjYRHev1YIXIXyqbOl7fFcgwBKoqcAGaOnb5aXytm9YsAHyWxPxC+LiQLSY37ID\n" +
-                "HbR57j496ou4ZMR2Z4Mkq8q4oM2vTSiXRIZVm84htBWhwzoEI67d2Qd3e3CIecHQ\n" +
-                "BjguAqECgYEA8iLyKqVxFuP8LR3QwGf3qnyUOdcfhkxG4fOmyROpxUyJqxVRhaQx\n" +
-                "bYnrBOFnly5O5GvWoAPqAeq9Ng/TTOKBqW09sk07Md+zo5ebqdSyOy4CFVY3dk7/\n" +
-                "D1hm0S+r7iGdJkB+h4o8a7+B5HgMTvkigj21x5JftSPtP2DpPTCyMusCgYEAzqm6\n" +
-                "i8xHPIeoBMOXDmxv5SmrGQ5Nh0KjKFMDGeix/7L0IXJWnDUwkRim2KeuO/aqcVPI\n" +
-                "o4JRaduKdzsDPQ8tgv3o3QEa4Jw1VbHzXfGQufrTW1zNfvl5NgS2+WMWk2PRPNs1\n" +
-                "U0oMmqVQNJ3CIHETiiQeCplbFJD18VNHrN0L0CUCgYEAsqENPmDm2RhABZilVAxf\n" +
-                "LarSPwlw/EZxVGfHdzfGWwNn3IrRpWHIBSNl+ie/oExNbz4PC+VXUSq3g5aRL3s6\n" +
-                "ZJ9ukIdhUB3UDK/f6p47DmWWq97685C7obp5v4EHuZmasYmKzrswb9zMGpxlmC07\n" +
-                "RBH6dMyLRrrGX6dC6h1umRkCgYBQQbPTVJqZlCkY6IhCLrRpr3vluBs9mxBXuZ0r\n" +
-                "s6Vkoq+SSZ/++90HjCZHXx8X5FwetKXncdWCIaMtWHqSfNF03HxRT3uLnL5NsFTN\n" +
-                "t+E3iIQKKAkZ9XIwGzaftO5wgMQiORMFbG1mpSp3tIhOJvuqmwobnaC0ZPNOK8Rb\n" +
-                "CmDrDQKBgA07Kp4WwH3U0yu9OkSPAK3eaiXtG29NPDEyOtZXl8CXEpkqHcSLMNq/\n" +
-                "AHScbOZ4PRFn2WhPxPTBB29yYZwrhjbJ4rgxJo8joJXshJHUIMBmO8T4Qn+YlG57\n" +
-                "bcz6Q8jVz2NjI8CQW3B2FeEvoWdNfTy75gjg14smJJaRmelfhkGI").replace("\n", ""));
-
         TransactionRequest request = new TransactionRequest();
-        request.setFaddr("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAw3ioYc1r61s2O/8fZ++JdPkY9VtCGk7VUealTpvBOnnkQkKz/j99tJEFDAbWVyyh8AtHJQxK/Vq1xtVZsSNEMglijhAl3YkbahuDq2j1AjBMPqcwURzi7flfNCov2HNAnE8FFeYVIabTL3FKnb0u2lNSCE228dPwTAYV6b9cNg2hrFZcRqc8UY0+WBDQ0tjHAlSPMi6VrAAecpZtBeTeEqI/YsX8b1C5WEWDL7GvOSkDU5kqvbKuQ/NZKSkxJs8fmM6XbtIs3mPRnJuJAgipEi6DOhDIRmH2TCvmHmGZMFljR5OIP1y2b9pCANmwNE3hTqdgHGdNe4egOL3p4jlL9wIDAQAB");
+        request.setFaddr(sharedPreferences.getString("publicKey", ""));
         request.setType("MT");
-
-        Log.d("faddr", request.getFaddr());
-        Log.d("type", request.getType());
-        Log.d("limit", String.valueOf(request.getLimit()));
-        Log.i("offset", String.valueOf(request.getOffset()));
-
         helper.sign(request);
-        Log.d("privatekey", helper.getPrivateKey());
+
+        Log.d("privateKey", helper.getPrivateKey());
         Log.d("sign", request.getSign());
 
         new TransactionTask(request) {
             protected void onPostExecute(List<Coin> result) {
+                Log.d("coin.length", String.valueOf(result.size()));
                 for (Coin coin : result) {
                     Log.d("sn:", coin.getSn());
                 }

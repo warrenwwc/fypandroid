@@ -132,45 +132,38 @@ public class Helper {
 
     public void sign(Signable request) {
         try {
-            byte[] keyBytes = Base64.decode(this.privateKey, Base64.DEFAULT);
+            byte[] keyBytes = Base64.decode(this.getPrivateKey(), Base64.DEFAULT);
             PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
             KeyFactory fact = KeyFactory.getInstance("RSA");
             PrivateKey privateKey = fact.generatePrivate(keySpec);
             this.sign(request, privateKey);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (InvalidKeySpecException e) {
-            e.printStackTrace();
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
-        } catch (SignatureException e) {
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException | NoSuchProviderException | SignatureException e) {
             e.printStackTrace();
         }
     }
 
     public void sign(Signable request, PrivateKey privateKey) throws NoSuchProviderException, SignatureException {
+        request.setSign(null);
+
         String json = this.gson.toJson(request);
         // sometimes it wont sort ...
         Type typeToken = new TypeToken<TreeMap<String, Object>>(){}.getType();
         TreeMap<String, Object> map = this.gson.fromJson(json, typeToken);
         json = this.gson.toJson(map);
         byte[] data = json.getBytes();
-        byte[] sign;
-        Formatter formatter = new Formatter();
-        String hex;
 
         try {
             Signature signature = Signature.getInstance("SHA256withRSA");
             signature.initSign(privateKey);
             signature.update(data);
-            sign = signature.sign();
+            byte[] sign = signature.sign();
 
+            Formatter formatter = new Formatter();
             for (byte b : sign) {
                 formatter.format("%02x", b);
             }
-            hex = formatter.toString();
 
-            request.setSign(hex);
+            request.setSign(formatter.toString());
         } catch (NoSuchAlgorithmException | InvalidKeyException ex) {
 
         }
