@@ -33,7 +33,7 @@ public class EndorseTask extends AsyncTask<Coin, Void, BaseResponse> {
 
         json = gson.toJson(coinList);
         try {
-            response = helper.request(json);
+            response = helper.transform(helper.request(json));
         } catch (IOException e) {
             return new BaseResponse();
         }

@@ -107,7 +107,7 @@ public class Helper {
         }
     }
 
-    public BaseResponse request(String json) throws IOException {
+    public String request(String json) throws IOException {
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
         RequestBody body = RequestBody.create(JSON, json);
@@ -120,9 +120,13 @@ public class Helper {
 
         Response response = client.newCall(request).execute();
 
-        BaseResponse responseBody = this.gson.fromJson(response.body().string(), BaseResponse.class);
+        String responseBody = response.body().string();
 
         return responseBody;
+    }
+
+    public BaseResponse transform(String json) {
+        return this.gson.fromJson(json, BaseResponse.class);
     }
 
 }

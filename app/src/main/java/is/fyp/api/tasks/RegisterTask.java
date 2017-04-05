@@ -31,7 +31,7 @@ public class RegisterTask extends AsyncTask<Void, Void, BaseResponse> {
 
         json = gson.toJson(this.request);
         try {
-            response = helper.request(json);
+            response = helper.transform(helper.request(json));
         } catch (IOException e) {
             return new BaseResponse();
         }
