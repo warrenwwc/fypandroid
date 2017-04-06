@@ -60,10 +60,10 @@ public class CalendarFragment extends Fragment {
             protected void onPostExecute(List<Coin> result) {
                 Log.d("coin.length", String.valueOf(result.size()));
                 ArrayList<HashMap<String, String>> myListData = new ArrayList<HashMap<String, String>>();
-                HashMap<String, String> item = new HashMap<String, String>();
                 for (Coin coin : result) {
                     Log.d("sn:", coin.getSn());
-                    item.put(ID_TITLE, coin.getHsign());
+                    HashMap<String, String> item = new HashMap<String, String>();
+                    item.put(ID_TITLE, coin.getSn());
                     item.put(ID_SUBTITLE, coin.getTime());
                     myListData.add(item);
                 }

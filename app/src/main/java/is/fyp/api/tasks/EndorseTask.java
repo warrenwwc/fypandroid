@@ -1,10 +1,13 @@
 package is.fyp.api.tasks;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,22 +19,33 @@ import is.fyp.api.responses.BaseResponse;
  * Created by Jason on 5/4/2017.
  */
 
-public class EndorseTask extends AsyncTask<Coin, Void, BaseResponse> {
+public class EndorseTask extends AsyncTask<Void, Void, BaseResponse> {
+
+    private List<Coin> coinList;
+
+    public EndorseTask(List<Coin> conList) {
+        this.coinList = conList;
+    }
 
     @Override
-    protected BaseResponse doInBackground(Coin ...coins) {
+    protected BaseResponse doInBackground(Void ...params) {
+        if(android.os.Debug.isDebuggerConnected())
+            android.os.Debug.waitForDebugger();
+
         Helper helper = Helper.getInstance();
         Gson gson = new Gson();
         String json;
         BaseResponse response;
 
-        List<Coin> coinList = new ArrayList<>();
-        for (Coin coin : coins) {
+        for (Coin coin : this.coinList) {
             helper.sign(coin);
-            coinList.add(coin);
         }
 
-        json = gson.toJson(coinList);
+        Type coinListType = new TypeToken<ArrayList<Coin>>(){}.getType();
+        json = gson.toJson(coinList, coinListType);
+
+        Log.d("SignedJson", json);
+
         try {
             response = helper.transform(helper.request(json));
         } catch (IOException e) {

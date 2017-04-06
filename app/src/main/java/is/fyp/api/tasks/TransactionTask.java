@@ -36,7 +36,6 @@ public class TransactionTask extends AsyncTask<Void, Void, List<Coin>> {
             android.os.Debug.waitForDebugger();
 
         Helper helper = Helper.getInstance();
-        helper.setService("record");
         Gson gson = new Gson();
         String json;
         String response;
@@ -45,7 +44,7 @@ public class TransactionTask extends AsyncTask<Void, Void, List<Coin>> {
         json = gson.toJson(this.request);
 
         try {
-            response = helper.request(json);
+            response = helper.request(json, "record");
 
             try {
                 BaseResponse baseResponse = helper.transform(response);

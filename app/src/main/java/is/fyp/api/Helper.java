@@ -63,8 +63,6 @@ public class Helper {
 
     protected String privateKey;
 
-    protected String service;
-
     private Helper() {
         this.client = new OkHttpClient();
         this.gson = new GsonBuilder()
@@ -89,7 +87,6 @@ public class Helper {
                 ).create();
 
         this.endpoint = "https://mint1.coms.hk/";
-        this.service = "api";
         this.publicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxf17kB0kRznB/NH9/bokZ635UrIsO7q8NekNLUqxJDxCrCoesvqSz0Wln9tCPtfLGpwK9AXXlOtuSjxlx+yxsbIm0eNoV6TBvBnVAHHB2kehJmq/s1LYjVCbw9zQcfJBDw1K+BXirG6ExHwixxV6I8nM/JStDjqM8jUVeX3HkFqmXMKrwqloeKQ/USRHC4l11uZ8WEUQTyFloKpafGv1c2PRbLDt5UGpIxos/9hfHmpvbDA/13/IVTf0oeYLURP5+tYIVdx2tHnyKypNnZgdqYfHIrMv2bRECAsZquBOEyTZKombtIjMunafoxXn7tPAIUrG02uOnJB9UDCIxA3eZQIDAQAB";
 
         this.privateKey = "";
@@ -120,14 +117,6 @@ public class Helper {
 
     public void setPrivateKey(String privateKey) {
         this.privateKey = privateKey;
-    }
-
-    public String getService() {
-        return service;
-    }
-
-    public void setService(String service) {
-        this.service = service;
     }
 
     public void sign(Signable request) {
@@ -170,12 +159,16 @@ public class Helper {
     }
 
     public String request(String json) throws IOException {
+        return this.request(json, "api");
+    }
+
+    public String request(String json, String service) throws IOException {
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
         RequestBody body = RequestBody.create(JSON, json);
 
         Request request = new Request.Builder()
-                .url(this.endpoint + this.service)
+                .url(this.endpoint + service)
                 .addHeader("Content-Type", "application/json")
                 .post(body)
                 .build();
