@@ -9,11 +9,49 @@
     tools:context=".NFCDisplayActivity">
 
     <TextView
-        android:id="@+id/text_view"
+        android:id="@+id/pkText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="top|left"
+        android:lines="16"
+        android:textSize="16sp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/pkLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Public Key:"
         android:textSize="32sp"
-        android:lines="3"
-        android:gravity="top|left"/>
+        android:layout_marginBottom="32sp"
+        android:layout_above="@+id/pkText"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/amountLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="32sp"
+        android:text="Amount:" />
+
+    <TextView
+        android:id="@+id/amountText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:textSize="32sp"
+        android:layout_alignParentTop="true"
+        android:layout_alignEnd="@+id/pkLabel" />
+
+    <Button
+        android:id="@+id/pay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="19dp"
+        android:text="Confirm Payment" />
 
 </RelativeLayout>

@@ -1,4 +1,4 @@
-package is.fyp;
+package is.fyp.functions;
 
 /**
  * Created by eie3333 on 12/29/2016.

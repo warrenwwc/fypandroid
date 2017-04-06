@@ -7,13 +7,16 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
-import is.fyp.ResideMenu;
-import is.fyp.ResideMenuItem;
+
+import is.fyp.uiFragment.CalendarFragment;
+import is.fyp.uiFragment.HomeFragment;
+import is.fyp.uiFragment.PreferencesFragment;
+import is.fyp.uiFragment.ProfileFragment;
+import is.fyp.uiFragment.SettingsFragment;
+import is.fyp.uiFragment.TopupFragment;
 
 public class MenuActivity extends FragmentActivity implements View.OnClickListener{
 

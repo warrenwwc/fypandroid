@@ -76,7 +76,7 @@ public class NFCActivity extends Activity implements NfcAdapter.CreateNdefMessag
 
     private byte[] transData(String amount) {
         SharedPreferences sharedPreferences = getSharedPreferences("data" , MODE_PRIVATE);
-        String publicKey = String.valueOf(sharedPreferences.getBoolean("isLogin", false));
+        String publicKey = String.valueOf(sharedPreferences.getString("publicKey", ""));
         String rtnMeg = publicKey + "," + amount;
         return rtnMeg.getBytes();
     }

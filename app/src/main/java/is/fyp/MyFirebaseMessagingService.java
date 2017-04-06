@@ -17,11 +17,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-        NotificationCompat.Builder builder = new  NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("FYP")
-                .setContentText(remoteMessage.getNotification().getBody());
-        NotificationManager manager = (NotificationManager)     getSystemService(NOTIFICATION_SERVICE);
-        manager.notify(0, builder.build());
+        if (remoteMessage.getNotification() != null) {
+            NotificationCompat.Builder builder = new  NotificationCompat.Builder(this)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle("FYP")
+                    .setContentText(remoteMessage.getNotification().getBody());
+            NotificationManager manager = (NotificationManager)     getSystemService(NOTIFICATION_SERVICE);
+            manager.notify(0, builder.build());
+        }
     }
 }

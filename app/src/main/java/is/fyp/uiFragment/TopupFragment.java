@@ -1,4 +1,4 @@
-package is.fyp;
+package is.fyp.uiFragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -6,6 +6,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import is.fyp.MenuActivity;
+import is.fyp.R;
+import is.fyp.ResideMenu;
 
 /**
  * Created by Jason on 1/1/2017.

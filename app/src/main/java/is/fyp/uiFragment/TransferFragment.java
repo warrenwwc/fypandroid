@@ -1,20 +1,20 @@
-package is.fyp;
+package is.fyp.uiFragment;
 
 import android.content.Intent;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import is.fyp.MenuActivity;
+import is.fyp.R;
+import is.fyp.ResideMenu;
+import is.fyp.TransferActivity;
 
 /**
  * Created by Jason on 1/1/2017.
@@ -41,7 +41,7 @@ public class TransferFragment extends Fragment {
 
         //((TextView)parentView.findViewById(R.id.amount)).setText(Html.fromHtml("$ 50<sup><small>20</small></sup>"));
 
-        final TextView mEditText = (TextView) parentView.findViewById(R.id.amount);
+        final TextView mEditText = (TextView) parentView.findViewById(R.id.amountLabel);
 
         Button send = (Button) parentView.findViewById(R.id.send);
         send.setOnClickListener(new View.OnClickListener() {

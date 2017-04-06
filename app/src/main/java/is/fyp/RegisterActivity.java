@@ -1,6 +1,7 @@
 package is.fyp;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,6 +16,8 @@ import android.widget.Toast;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.iid.FirebaseInstanceId;
 
@@ -54,6 +57,8 @@ public class RegisterActivity extends AppCompatActivity {
     EditText email;
     EditText pass1;
     EditText pass2;
+    AlertDialog.Builder alertDialogBuilder;
+    AlertDialog alertDialog;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +71,13 @@ public class RegisterActivity extends AppCompatActivity {
         email = (EditText) findViewById(R.id.your_email_address);
         pass1 = (EditText) findViewById(R.id.create_new_password);
         pass2 = (EditText) findViewById(R.id.create_new_password2);
+        final int playServicesStatus = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+        if(playServicesStatus != ConnectionResult.SUCCESS){
+            //If google play services in not available show an error dialog and return
+            final Dialog errorDialog = GoogleApiAvailability.getInstance().getErrorDialog(this, playServicesStatus, 0, null);
+            errorDialog.show();
+            return;
+        }
     }
 
     public void register(View view) throws Exception {
@@ -147,6 +159,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         new RegisterTask(request) {
             protected void onPostExecute(BaseResponse result) {
+
                 if(!result.hasError() && result.message.equals("SUCCESS_CREATE_TICKET")) {
                     SharedPreferences sharedPreferences = getSharedPreferences("data" , MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -181,7 +194,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void openSuccessAlert() {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(RegisterActivity.this);
+        alertDialogBuilder = new AlertDialog.Builder(RegisterActivity.this);
 
         alertDialogBuilder.setTitle("Registration Success");
         alertDialogBuilder.setMessage("Click OK to continue");
@@ -194,13 +207,13 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog = alertDialogBuilder.create();
         // show alert
         alertDialog.show();
     }
 
     private void openFailAlert() {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(RegisterActivity.this);
+        alertDialogBuilder = new AlertDialog.Builder(RegisterActivity.this);
 
         alertDialogBuilder.setTitle("Registration Failed");
         alertDialogBuilder.setMessage("Click Continue to register again");
@@ -215,7 +228,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog = alertDialogBuilder.create();
         // show alert
         alertDialog.show();
     }
@@ -264,5 +277,11 @@ public class RegisterActivity extends AppCompatActivity {
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
+    }
+
+    @Override
+    protected void onDestroy() {
+        alertDialog.dismiss();
+        super.onDestroy();
     }
 }

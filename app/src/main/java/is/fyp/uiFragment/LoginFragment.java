@@ -1,15 +1,14 @@
-package is.fyp;
+package is.fyp.uiFragment;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 
-import static android.content.Context.MODE_PRIVATE;
+import is.fyp.MenuActivity;
+import is.fyp.R;
+import is.fyp.ResideMenu;
 
 /**
  * Created by eie3333 on 12/24/2016.

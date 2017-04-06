@@ -1,6 +1,5 @@
-package is.fyp;
+package is.fyp.uiFragment;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,8 +7,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
+
+import is.fyp.R;
 
 import static android.content.Context.MODE_PRIVATE;
 

@@ -17,6 +17,8 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import is.fyp.api.Coin;
@@ -33,17 +35,21 @@ public class MainActivity extends AppCompatActivity{
     SharedPreferences sharedPreferences;
     EditText id;
     EditText password;
+    public ArrayList<HashMap<String, String>> myListData = new ArrayList<HashMap<String, String>>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Helper helper = Helper.getInstance();
+
         sharedPreferences = getSharedPreferences("data" , MODE_PRIVATE);
+        boolean isLogin = sharedPreferences.getBoolean("isLogin", false);
+        Log.d("Private Key", sharedPreferences.getString("privateKey", ""));
+        Log.d("Public Key", sharedPreferences.getString("publicKey", ""));
+
+        Helper helper = Helper.getInstance();
         if (sharedPreferences.contains("privateKey") && !sharedPreferences.getString("privateKey", "").isEmpty()) {
             helper.setPrivateKey(sharedPreferences.getString("privateKey", ""));
         }
-
-        //Log.d("fcm:", FirebaseInstanceId.getInstance().getToken()); null point wtf
-
         TransactionRequest request = new TransactionRequest();
         request.setFaddr(sharedPreferences.getString("publicKey", ""));
         request.setType("MT");
@@ -61,7 +67,6 @@ public class MainActivity extends AppCompatActivity{
             }
         }.execute();
 
-        boolean isLogin = sharedPreferences.getBoolean("isLogin", false);
         if (isLogin) {
             Intent i = new Intent(MainActivity.this, MenuActivity.class);
             MainActivity.this.finish();
@@ -72,6 +77,10 @@ public class MainActivity extends AppCompatActivity{
             sign_up = (TextView) findViewById(R.id.sign_up);
             sign_in = (Button) findViewById(R.id.sign_in);
         }
+
+
+        Log.d("fcm:", FirebaseInstanceId.getInstance().getToken());
+
     }
 
     private void openFailAlert() {

@@ -1,6 +1,4 @@
-package is.fyp;
-
-import org.ow2.util.base64.Base64;
+package is.fyp.functions;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;

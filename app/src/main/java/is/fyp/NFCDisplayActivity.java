@@ -2,26 +2,51 @@ package is.fyp;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.List;
+
+import is.fyp.api.Coin;
+import is.fyp.api.Helper;
+import is.fyp.api.requests.TransactionRequest;
+import is.fyp.api.tasks.TransactionTask;
 
 public class NFCDisplayActivity extends Activity {
 
-    private TextView mTextView;
+    private TextView pkText;
+    private TextView amountText;
+    SharedPreferences sharedPreferences;
+    int amount;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nfc_display);
-        mTextView = (TextView) findViewById(R.id.text_view);
+        pkText = (TextView) findViewById(R.id.pkText);
+        amountText = (TextView) findViewById(R.id.amountText);
+        sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
+
+        Button pay = (Button) findViewById(R.id.pay);
+        pay.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent i = new Intent(NFCDisplayActivity.this, MenuActivity.class);
+                startActivity(i);
+            }
+        });
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         Intent intent = getIntent();
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
@@ -29,10 +54,11 @@ public class NFCDisplayActivity extends Activity {
                     NfcAdapter.EXTRA_NDEF_MESSAGES);
 
             NdefMessage message = (NdefMessage) rawMessages[0]; // only one message transferred
-            mTextView.setText(new String(message.getRecords()[0].getPayload()));
-
-        } else
-            mTextView.setText("Waiting for NDEF Message");
+            String strArr[] = new String(message.getRecords()[0].getPayload()).split(",");
+            pkText.setText(strArr[0]);
+            amountText.setText(strArr[1]);
+            amount = Integer.parseInt(strArr[1]);
+        }
 
     }
 }
