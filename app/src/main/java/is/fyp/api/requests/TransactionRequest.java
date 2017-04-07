@@ -10,7 +10,6 @@ public class TransactionRequest extends BaseRequest {
     private int offset;
 
     public TransactionRequest() {
-        this.setType("RR");
         this.setLimit(100);
         this.setOffset(0);
     }
