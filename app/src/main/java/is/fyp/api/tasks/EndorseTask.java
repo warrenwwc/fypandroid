@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
@@ -33,7 +34,7 @@ public class EndorseTask extends AsyncTask<Void, Void, BaseResponse> {
             android.os.Debug.waitForDebugger();
 
         Helper helper = Helper.getInstance();
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().disableHtmlEscaping().create();
         String json;
         BaseResponse response;
 

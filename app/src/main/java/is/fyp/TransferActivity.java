@@ -60,7 +60,7 @@ public class TransferActivity extends Activity implements NfcAdapter.CreateNdefM
 
     private byte[] transData(String amount) {
         SharedPreferences sharedPreferences = getSharedPreferences("data" , MODE_PRIVATE);
-        String publicKey = String.valueOf(sharedPreferences.getString("privateKey", ""));
+        String publicKey = String.valueOf(sharedPreferences.getString("publicKey", ""));
         String rtnMeg = publicKey + "," + amount;
         return rtnMeg.getBytes();
     }

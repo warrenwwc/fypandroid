@@ -66,6 +66,7 @@ public class Helper {
     private Helper() {
         this.client = new OkHttpClient();
         this.gson = new GsonBuilder()
+                .disableHtmlEscaping()
                 .registerTypeAdapter(
                         new TypeToken<TreeMap<String, Object>>(){}.getType(),
                         new JsonDeserializer<TreeMap<String, Object>>() {

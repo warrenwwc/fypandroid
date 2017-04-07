@@ -63,39 +63,39 @@ public class MainActivity extends AppCompatActivity{
             sign_in = (Button) findViewById(R.id.sign_in);
         }
 
-        TransactionRequest request = new TransactionRequest();
-        final String publicKey = sharedPreferences.getString("publicKey", "");
-        final String randomMerchant = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwnqEM1PNOF++GUR2oElEmkIQh0ZbXu7Fr7Fjouv36JTWaXA4EjHFBnZKghKq7flFDJ+UVEIHJr/BL30AT3e1AimMb3xmUbm2q3BThHXZr7gfPIeXmuGNRaaY9YPC9tX7xCAwhy9ChNpxr6Hlf226+Yc4Fq7be/QxYyka7DTu5cyNijk09pCCL6jA4aMm59yhfM9j8ESjxOxgYhV+qL8Mz9okHT0IvetUZsHdDtWbkarfEpZAoyZZNXguod0XCgWZwVCK9+tpJzk4S/XSWu12UZyQ8PKYIvw5Tgoo6cJOJ/vhvikaFvuzvfoG5sTIExrqa+Utrol2t0Hq5Vu2gOTR3wIDAQAB";
-        request.setFaddr(publicKey);
-        request.setType("MT");
-        helper.sign(request);
+//        TransactionRequest request = new TransactionRequest();
+//        final String publicKey = sharedPreferences.getString("publicKey", "");
+//        final String randomMerchant = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwnqEM1PNOF++GUR2oElEmkIQh0ZbXu7Fr7Fjouv36JTWaXA4EjHFBnZKghKq7flFDJ+UVEIHJr/BL30AT3e1AimMb3xmUbm2q3BThHXZr7gfPIeXmuGNRaaY9YPC9tX7xCAwhy9ChNpxr6Hlf226+Yc4Fq7be/QxYyka7DTu5cyNijk09pCCL6jA4aMm59yhfM9j8ESjxOxgYhV+qL8Mz9okHT0IvetUZsHdDtWbkarfEpZAoyZZNXguod0XCgWZwVCK9+tpJzk4S/XSWu12UZyQ8PKYIvw5Tgoo6cJOJ/vhvikaFvuzvfoG5sTIExrqa+Utrol2t0Hq5Vu2gOTR3wIDAQAB";
+//        request.setFaddr(publicKey);
+//        request.setType("MT");
+//        helper.sign(request);
 
-        new TransactionTask(request) {
-            protected void onPostExecute(List<Coin> result) {
-                List<Coin> coins = result.subList(0, 2);
-                List<Coin> pay = new ArrayList<>();
-                for (Coin coin : coins) {
-                    Coin temp = new Coin();
-                    temp.setFaddr(publicKey);
-                    temp.setTaddr(randomMerchant);
-                    temp.setType("TX");
-                    temp.setSn(coin.getSn());
-                    pay.add(temp);
-                }
+//        new TransactionTask(request) {
+//            protected void onPostExecute(List<Coin> result) {
+//                List<Coin> coins = result.subList(0, 2);
+//                List<Coin> pay = new ArrayList<>();
+//                for (Coin coin : coins) {
+//                    Coin temp = new Coin();
+//                    temp.setFaddr(publicKey);
+//                    temp.setTaddr(randomMerchant);
+//                    temp.setType("TX");
+//                    temp.setSn(coin.getSn());
+//                    pay.add(temp);
+//                }
+//
+//                new EndorseTask(pay) {
+//                    protected void onPostExecute(BaseResponse result) {
+//                        if (!result.hasError()) {
+//                            Log.d("Endorse", result.message);
+//                        }else{
+//                            Log.d("Endorse Error", result.error);
+//                        }
+//                    }
+//                }.execute();
+//            }
+//        }.execute();
 
-                new EndorseTask(pay) {
-                    protected void onPostExecute(BaseResponse result) {
-                        if (!result.hasError()) {
-                            Log.d("Endorse", result.message);
-                        }else{
-                            Log.d("Endorse Error", result.error);
-                        }
-                    }
-                }.execute();
-            }
-        }.execute();
-
-        //Log.d("fcm:", FirebaseInstanceId.getInstance().getToken());
+        Log.d("fcm:", FirebaseInstanceId.getInstance().getToken());
 
     }
 
