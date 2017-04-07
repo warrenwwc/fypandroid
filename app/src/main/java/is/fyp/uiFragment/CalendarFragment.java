@@ -53,7 +53,7 @@ public class CalendarFragment extends Fragment {
         final Helper helper = Helper.getInstance();
         TransactionRequest request = new TransactionRequest();
         request.setFaddr(sharedPreferences.getString("publicKey", ""));
-        request.setType("MT");
+        request.setType("TX");
         helper.sign(request);
 
         new TransactionTask(request) {

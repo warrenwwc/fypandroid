@@ -56,7 +56,7 @@ public class NFCDisplayActivity extends Activity {
 
                         Log.d("i have", String.valueOf(result.size()));
 
-                        List<Coin> coins = result.subList(0, amt);
+                        List<Coin> coins = result.subList(2, amt);
                         List<Coin> pay = new ArrayList<>();
                         for (Coin coin : coins) {
                             Coin temp = new Coin();

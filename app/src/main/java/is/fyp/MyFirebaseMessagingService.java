@@ -25,5 +25,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             NotificationManager manager = (NotificationManager)     getSystemService(NOTIFICATION_SERVICE);
             manager.notify(0, builder.build());
         }
+        if (remoteMessage.getData() != null) {
+            NotificationCompat.Builder builder = new  NotificationCompat.Builder(this)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle("FYP")
+                    .setContentText(remoteMessage.getData().toString());
+            NotificationManager manager = (NotificationManager)     getSystemService(NOTIFICATION_SERVICE);
+            manager.notify(0, builder.build());
+        }
     }
 }
