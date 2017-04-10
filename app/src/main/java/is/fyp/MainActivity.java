@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity{
 
         final Helper helper = Helper.getInstance();
         if (sharedPreferences.contains("privateKey") && !sharedPreferences.getString("privateKey", "").isEmpty()) {
+            Log.d("publicKey", sharedPreferences.getString("publicKey", ""));
             Log.d("privateKey", sharedPreferences.getString("privateKey", ""));
             helper.setPrivateKey(sharedPreferences.getString("privateKey", ""));
         }
