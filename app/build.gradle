@@ -52,6 +52,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.google.android.gms:play-services:10.2.1'
     compile 'com.google.zxing:core:3.3.0'
+    compile 'me.dm7.barcodescanner:zbar:1.9'
 }
 
 apply plugin: 'com.google.gms.google-services'

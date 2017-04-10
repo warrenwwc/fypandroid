@@ -1,10 +1,15 @@
 package is.fyp.uiFragment;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,9 +17,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import is.fyp.CameraActivity;
 import is.fyp.MenuActivity;
 import is.fyp.R;
 import is.fyp.ResideMenu;
+import me.dm7.barcodescanner.zbar.Result;
+import me.dm7.barcodescanner.zbar.ZBarScannerView;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -28,12 +36,29 @@ public class PayFragment extends Fragment {
     private MenuActivity parentActivity;
     private ResideMenu resideMenu;
 
+    private ZBarScannerView mScannerView;
+
     private static final int CAPTURE_IMAGE_ACTIVITY_REQ = 0;
+    private static final int ZBAR_CAMERA_PERMISSION = 1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        this.startActivityForResult(cameraIntent, CAPTURE_IMAGE_ACTIVITY_REQ);
+
+
+        /*Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        this.startActivityForResult(cameraIntent, CAPTURE_IMAGE_ACTIVITY_REQ);*/
+        Intent i = new Intent(getActivity(), CameraActivity.class);
+        startActivity(i);
+
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.CAMERA}, ZBAR_CAMERA_PERMISSION);
+        } else {
+            Intent intent = new Intent(getActivity(), CameraActivity.class);
+            startActivity(intent);
+        }
+
         parentView = inflater.inflate(R.layout.pay, container, false);
         setUpViews();
         parentView.setVisibility(View.INVISIBLE);
@@ -53,6 +78,22 @@ public class PayFragment extends Fragment {
                 parentActivity.changeFragment(new HomeFragment());
             }
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,  String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case ZBAR_CAMERA_PERMISSION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if(CameraActivity.class != null) {
+                        Intent intent = new Intent(getActivity(), CameraActivity.class);
+                        startActivity(intent);
+                    }
+                } else {
+                    Toast.makeText(getContext(), "Please grant camera permission to use the QR Scanner", Toast.LENGTH_SHORT).show();
+                }
+                return;
+        }
     }
 
     // TODO:  make a  camera activity for furture usage

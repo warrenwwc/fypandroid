@@ -14,6 +14,7 @@ import static com.google.android.gms.wearable.DataMap.TAG;
  */
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
+
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
@@ -31,7 +32,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     .setContentTitle("FYP")
                     .setContentText(remoteMessage.getData().toString());
             NotificationManager manager = (NotificationManager)     getSystemService(NOTIFICATION_SERVICE);
-            manager.notify(0, builder.build());
+            manager.notify(remoteMessage.hashCode(), builder.build());
         }
     }
 }
