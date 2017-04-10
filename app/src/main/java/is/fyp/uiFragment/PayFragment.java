@@ -48,7 +48,8 @@ public class PayFragment extends Fragment {
         /*Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         this.startActivityForResult(cameraIntent, CAPTURE_IMAGE_ACTIVITY_REQ);*/
         Intent i = new Intent(getActivity(), CameraActivity.class);
-        startActivity(i);
+        startActivityForResult(i, CAPTURE_IMAGE_ACTIVITY_REQ);
+        //startActivity(i);
 
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -105,7 +106,7 @@ public class PayFragment extends Fragment {
                 if (data == null) {
                     Toast.makeText(activity, "Image saved successfully", Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(activity, "Image saved successfully in: " + data.getData(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(activity, "Image saved successfully in: " + data.getStringExtra("result"), Toast.LENGTH_LONG).show();
                 }
                 parentView.setVisibility(View.VISIBLE);
                 // showPhoto(photoUri);

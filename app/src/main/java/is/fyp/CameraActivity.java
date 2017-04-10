@@ -1,6 +1,8 @@
 package is.fyp;
 
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
@@ -25,7 +27,6 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
     public void onCreate(Bundle state) {
         super.onCreate(state);
         setContentView(R.layout.activity_zbar_scanner);
-        setupToolbar();
         ViewGroup contentFrame = (ViewGroup) findViewById(R.id.preview);
         mScannerView = new ZBarScannerView(this);
         contentFrame.addView(mScannerView);
@@ -46,7 +47,12 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
 
     @Override
     public void handleResult(Result rawResult) {
-        Toast.makeText(this, "Contents = " + rawResult.getContents() +
+        Intent data = new Intent();
+        data.putExtra("result", rawResult.getContents());
+        setResult(RESULT_OK, data);
+        finish();
+
+        /*Toast.makeText(this, "Contents = " + rawResult.getContents() +
                 ", Format = " + rawResult.getBarcodeFormat().getName(), Toast.LENGTH_SHORT).show();
         // Note:
         // * Wait 2 seconds to resume the preview.
@@ -58,27 +64,7 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
             public void run() {
                 mScannerView.resumeCameraPreview(CameraActivity.this);
             }
-        }, 2000);
-    }
-
-    public void setupToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        final ActionBar ab = getSupportActionBar();
-        if(ab != null) {
-            ab.setDisplayHomeAsUpEnabled(true);
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            // Respond to the action bar's Up/Home button
-            case android.R.id.home:
-                finish();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
+        }, 2000);*/
     }
 
 }
