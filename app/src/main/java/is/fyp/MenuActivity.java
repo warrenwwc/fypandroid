@@ -113,7 +113,7 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
             changeFragment(new CalendarFragment());
         }else if (view == itemSettings){
             changeFragment(new SettingsFragment());
-            getFragmentManager().beginTransaction().replace(R.id.main_fragment, new PreferencesFragment(), "fragment").setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
+            getFragmentManager().beginTransaction().replace(R.id.main_fragment, new PreferencesFragment(), "fragment").addToBackStack("fragment").setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
         }else if (view == itemTopup){
             changeFragment(new TopupFragment());
         }
@@ -151,6 +151,7 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.main_fragment, targetFragment, "fragment")
+                .addToBackStack("fragment")
                 .setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
     }
