@@ -44,7 +44,7 @@ public class TransactionTask extends AsyncTask<Void, Void, List<Coin>> {
         json = gson.toJson(this.request);
 
         try {
-            response = helper.request(json, "record");
+            response = helper.request(json, "record", "post");
 
             try {
                 BaseResponse baseResponse = helper.transform(response);

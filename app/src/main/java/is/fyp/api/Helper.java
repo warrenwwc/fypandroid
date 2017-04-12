@@ -31,6 +31,9 @@ import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Formatter;
 import java.util.Map;
 import java.util.Set;
@@ -39,6 +42,7 @@ import java.util.TreeMap;
 import is.fyp.api.contracts.Signable;
 import is.fyp.api.requests.BaseRequest;
 import is.fyp.api.responses.BaseResponse;
+import is.fyp.api.responses.QueueResponse;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -159,20 +163,81 @@ public class Helper {
         }
     }
 
-    public String request(String json) throws IOException {
-        return this.request(json, "api");
+    public String getEndpoint() {
+        ArrayList<String> mints = new ArrayList<>(Arrays.asList("https://mint1.coms.hk/", "https://mint2.coms.hk/", "https://mint3.coms.hk/"));
+        String[] mintPublicKey = {
+                "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxf17kB0kRznB/NH9/bokZ635UrIsO7q8NekNLUqxJDxCrCoesvqSz0Wln9tCPtfLGpwK9AXXlOtuSjxlx+yxsbIm0eNoV6TBvBnVAHHB2kehJmq/s1LYjVCbw9zQcfJBDw1K+BXirG6ExHwixxV6I8nM/JStDjqM8jUVeX3HkFqmXMKrwqloeKQ/USRHC4l11uZ8WEUQTyFloKpafGv1c2PRbLDt5UGpIxos/9hfHmpvbDA/13/IVTf0oeYLURP5+tYIVdx2tHnyKypNnZgdqYfHIrMv2bRECAsZquBOEyTZKombtIjMunafoxXn7tPAIUrG02uOnJB9UDCIxA3eZQIDAQAB",
+                "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxDOi4PlBmE7AL9lMmNQB1vyi21OS50Savqe8RsijBdA55tglfwA7U5HtdBQn50UXDBTLAIRklP0WFxjPHNBjTUTiL4oN3SHH2E/DI+0WfBjS9ODrBhbKgJdRJ9eKb2rJSxZdGcKq2X6fEPWCyLsqaYQSjTosdZUAEM+aRQrWRfG4KtRRgDQ4HBh2pDjAVdjDTLcOEX2BjKpSAg9j/L3uBcnEZkxHBf6tYO+5smeT5posR4lV5hprM5W4J3bBOgcvZ6accr25sdGIgnnbHKwomCH/voy7DHGk0bmoruSM3jju4wtJKsNysVsA/PwsF7siKm3LLRk4OK9Ez36uo21ajQIDAQAB",
+                "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0HAJVXE4/1Y9FB0nxf5FGTUhNg3HCX6Sds9NvfMv5xIIDYM+xDJ9lzhxYohWij5zZmSI3ch3giPhz/T/l0cX08/UBc81yobikBhYOtXj7Hfj/Rm4gylSF9dRK2ngGSOKLyRKHOYC/+xtJUB/qki0FgG5sRdSmdV2T9tB08WZq4dfjkxtUfmJfPvTR1Wt2Bq1gZTe4rofcLyhtQFwyRQ/wo+4i89j1HB4FaLw3VvBOFIm6AJYrizv9lgv4hZ5JDdLjIZUU7S4Y+GpkH2hjyN5Q3Tbjl3xUF9OTTon+b9rSeUPg4GDniGk5H4DOK1dTxYwsSB85ifUo6DkQqnUIiic/QIDAQAB"
+        };
+        ArrayList<Integer> mintStatus = new ArrayList<>();
+
+        Request.Builder requestBuilder = new Request.Builder().addHeader("Content-Type", "application/json").get();
+
+        int i = 0;
+        for (String mint : mints) {
+            try {
+                Response response = client.newCall(requestBuilder.url(mint + "queue").build()).execute();
+
+                String responseBody = response.body().string();
+
+                QueueResponse mintQueue = gson.fromJson(responseBody, QueueResponse.class);
+
+                mintStatus.add(i, mintQueue.queue);
+
+                if (mintQueue.queue == 0) {
+                    return mint;
+                }
+
+            } catch (IOException e) {
+                continue;
+            }
+            i++;
+        }
+
+        if (mintStatus.isEmpty()) {
+            return null;
+        }
+
+        Integer bestMint = mintStatus.indexOf(Collections.min(mintStatus));
+
+        if (!mints.get(bestMint).isEmpty()) {
+            this.setPublicKey(mintPublicKey[bestMint]);
+            return mints.get(bestMint);
+        }
+
+        return mints.get(0);
     }
 
-    public String request(String json, String service) throws IOException {
-        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    public String request(String json) throws IOException {
+        return this.request(json, "api", "post");
+    }
 
-        RequestBody body = RequestBody.create(JSON, json);
+    public String request(String json, String service, String method) throws IOException {
 
-        Request request = new Request.Builder()
-                .url(this.endpoint + service)
-                .addHeader("Content-Type", "application/json")
-                .post(body)
-                .build();
+        String mintEndpoint = this.getEndpoint();
+
+        if (mintEndpoint == null) {
+            BaseResponse response = new BaseResponse();
+            response.setError("No mint server is available.");
+            return this.gson.toJson(response);
+        }
+
+        Log.d("Current mint:", mintEndpoint);
+
+        Request.Builder requestBuilder = new Request.Builder()
+                .url(mintEndpoint + service)
+                .addHeader("Content-Type", "application/json");
+
+        Request request;
+
+        if (method.equals("post")) {
+            MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+            RequestBody body = RequestBody.create(JSON, json);
+            request = requestBuilder.post(body).build();
+        } else {
+            request = requestBuilder.get().build();
+        }
 
         Response response = client.newCall(request).execute();
 

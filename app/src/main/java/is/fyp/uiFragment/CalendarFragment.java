@@ -63,7 +63,7 @@ public class CalendarFragment extends Fragment {
                 for (Coin coin : result) {
                     Log.d("sn:", coin.getSn());
                     HashMap<String, String> item = new HashMap<String, String>();
-                    item.put(ID_TITLE, coin.getSn());
+                    item.put(ID_TITLE, coin.getType() + ": " + coin.getSn());
                     item.put(ID_SUBTITLE, coin.getTime());
                     myListData.add(item);
                 }

@@ -21,15 +21,15 @@ import java.util.Map;
 public class EncodeBarcodeTask extends AsyncTask<String, Void, Bitmap> {
     @Override
     protected Bitmap doInBackground(String ...params) {
-        int width = 500;
-        int height = 500;
+        int width = 312;
+        int height = 312;
         String value = params[0];
         BitMatrix bitMatrix;
         Map<EncodeHintType, Object> hints = new EnumMap<EncodeHintType, Object>(EncodeHintType.class);
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
         hints.put(EncodeHintType.MARGIN, 1);
+        hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
         try {
-            hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
             bitMatrix = new MultiFormatWriter().encode(
                     value,
                     BarcodeFormat.DATA_MATRIX.QR_CODE,

@@ -15,4 +15,12 @@ public class BaseResponse {
     public boolean hasError() {
         return this.error != null && !this.error.isEmpty();
     }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
 }

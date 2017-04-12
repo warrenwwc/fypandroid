@@ -34,6 +34,7 @@ import is.fyp.api.Helper;
 import is.fyp.api.requests.TransactionRequest;
 import is.fyp.api.responses.BaseResponse;
 import is.fyp.api.tasks.EndorseTask;
+import is.fyp.api.tasks.GetCoinsTask;
 import is.fyp.api.tasks.TransactionTask;
 import me.dm7.barcodescanner.zbar.Result;
 import me.dm7.barcodescanner.zbar.ZBarScannerView;
@@ -94,20 +95,57 @@ public class PayFragment extends Fragment {
         payButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                final Helper helper = Helper.getInstance();
-                TransactionRequest request = new TransactionRequest();
+                //final Helper helper = Helper.getInstance();
+                //TransactionRequest request = new TransactionRequest();
                 final String publicKey = sharedPreferences.getString("publicKey", "");
+                final int amount = Integer.parseInt(targetAmount);
+
+                new GetCoinsTask(){
+                    protected void onPostExecute(ArrayList<String> result) {
+                        List<Coin> pay = new ArrayList<>();
+
+                        if (amount != result.size()) {
+                            return;
+                        }
+
+                        for (String coin : result) {
+                            Coin temp = new Coin();
+                            temp.setFaddr(publicKey);
+                            temp.setTaddr(targetPublickey);
+                            temp.setType("TX");
+                            temp.setSn(coin);
+                            pay.add(temp);
+                        }
+
+                        new EndorseTask(pay) {
+                            protected void onPostExecute(BaseResponse result) {
+                                if (!result.hasError()) {
+                                    Log.d("Endorse", result.message);
+                                }else{
+                                    Log.d("Endorse Error", result.error);
+                                }
+                            }
+                        }.execute();
+                    }
+                }.execute(publicKey, amount);
+
+
+
+
+/*
                 //final String randomMerchant = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwnqEM1PNOF++GUR2oElEmkIQh0ZbXu7Fr7Fjouv36JTWaXA4EjHFBnZKghKq7flFDJ+UVEIHJr/BL30AT3e1AimMb3xmUbm2q3BThHXZr7gfPIeXmuGNRaaY9YPC9tX7xCAwhy9ChNpxr6Hlf226+Yc4Fq7be/QxYyka7DTu5cyNijk09pCCL6jA4aMm59yhfM9j8ESjxOxgYhV+qL8Mz9okHT0IvetUZsHdDtWbkarfEpZAoyZZNXguod0XCgWZwVCK9+tpJzk4S/XSWu12UZyQ8PKYIvw5Tgoo6cJOJ/vhvikaFvuzvfoG5sTIExrqa+Utrol2t0Hq5Vu2gOTR3wIDAQAB";
                 request.setFaddr(publicKey);
+                request.setLimit(1000);
                 //request.setType("MT");
                 helper.sign(request);
+
 
                 new TransactionTask(request) {
                     protected void onPostExecute(List<Coin> result) {
 
                         ArrayList<String> endorsed = new ArrayList<String>();
                         for (Coin coin : result) {
-                            if(coin.getType().equals("TX")) {
+                            if(coin.getType().equals("TX") || coin.getType().equals("RR")) {
                                 endorsed.add(coin.getSn());
                                 //endorsed.add(coin.getHsign());
                                 Log.d("used coin", coin.getHsign());
@@ -119,7 +157,7 @@ public class PayFragment extends Fragment {
                         List<Coin> pay = new ArrayList<>();
                         outerloop:
                         for (Coin coin : result) {
-                            if(!coin.getType().equals("MT")) {
+                            if(!coin.getType().equals("MT") && !coin.getType().equals("ED")) {
                                 continue ;
                             }
                             Log.d("count", String.valueOf(count));
@@ -152,7 +190,7 @@ public class PayFragment extends Fragment {
                             }
                         }.execute();
                     }
-                }.execute();
+                }.execute();*/
 
                 //parentActivity.changeFragment(new HomeFragment());
             }
