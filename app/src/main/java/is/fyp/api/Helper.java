@@ -78,8 +78,6 @@ public class Helper {
                             public TreeMap<String, Object> deserialize(
                                     JsonElement json, Type typeOfT,
                                     JsonDeserializationContext context) throws JsonParseException {
-
-
                                 TreeMap<String, Object> treeMap = new TreeMap<>();
                                 JsonObject jsonObject = json.getAsJsonObject();
                                 Set<Map.Entry<String, JsonElement>> entrySet = jsonObject.entrySet();
@@ -206,6 +204,7 @@ public class Helper {
             return mints.get(bestMint);
         }
 
+        this.setPublicKey(mintPublicKey[0]);
         return mints.get(0);
     }
 
@@ -241,9 +240,7 @@ public class Helper {
 
         Response response = client.newCall(request).execute();
 
-        String responseBody = response.body().string();
-
-        return responseBody;
+        return response.body().string();
     }
 
     public BaseResponse transform(String json) {

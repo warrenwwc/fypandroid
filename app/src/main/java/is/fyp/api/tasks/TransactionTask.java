@@ -42,6 +42,7 @@ public class TransactionTask extends AsyncTask<Void, Void, List<Coin>> {
         List<Coin> coinList = new ArrayList<>();
 
         json = gson.toJson(this.request);
+        Log.d("signedJson", json);
 
         try {
             response = helper.request(json, "record", "post");

@@ -3,6 +3,7 @@ package is.fyp.api.requests;
 import is.fyp.api.contracts.Signable;
 
 public class BaseRequest implements Signable {
+
     private String faddr;
     private String taddr;
     private String type;

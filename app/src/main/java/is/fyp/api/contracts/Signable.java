@@ -5,9 +5,11 @@ package is.fyp.api.contracts;
  */
 
 public interface Signable {
+
     String sign = null;
 
     String getSign();
 
     void setSign(String sign);
+
 }
