@@ -30,7 +30,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             NotificationCompat.Builder builder = new  NotificationCompat.Builder(this)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentTitle("FYP")
-                    .setContentText(remoteMessage.getData().toString());
+                    .setContentText(remoteMessage.getData().get("success"));
             NotificationManager manager = (NotificationManager)     getSystemService(NOTIFICATION_SERVICE);
             manager.notify(remoteMessage.hashCode(), builder.build());
         }

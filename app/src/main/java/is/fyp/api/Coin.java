@@ -14,6 +14,7 @@ public class Coin implements Signable {
     private String sign;
     private String time;
     private String hsign;
+    private int amount;
 
     public String getFaddr() {
         return faddr;
@@ -67,8 +68,13 @@ public class Coin implements Signable {
         return hsign;
     }
 
-    public void setHsign(String hsign) {
-        this.hsign = hsign;
+    public void setHsign(String hsign) { this.hsign = hsign; }
+
+    public int getAmount() {
+        return amount;
     }
 
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
 }

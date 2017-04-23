@@ -1,15 +1,24 @@
 package is.fyp.uiFragment;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import java.util.List;
 
 import is.fyp.MenuActivity;
 import is.fyp.R;
 import is.fyp.ResideMenu;
+import is.fyp.api.Coin;
+import is.fyp.api.Helper;
+import is.fyp.api.requests.TransactionRequest;
+import is.fyp.api.tasks.TransactionTask;
 
 /**
  * User: special
@@ -21,10 +30,12 @@ public class HomeFragment extends Fragment {
 
     private View parentView;
     private ResideMenu resideMenu;
+    private SharedPreferences sharedPreferences;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         parentView = inflater.inflate(R.layout.home, container, false);
+        sharedPreferences = this.getActivity().getSharedPreferences("data", this.getActivity().MODE_PRIVATE);
         setUpViews();
         return parentView;
     }
@@ -32,6 +43,27 @@ public class HomeFragment extends Fragment {
     private void setUpViews() {
         final MenuActivity parentActivity = (MenuActivity) getActivity();
         resideMenu = parentActivity.getResideMenu();
+
+        final TextView balance = (TextView) parentView.findViewById(R.id.balance);
+        final Helper helper = Helper.getInstance();
+        TransactionRequest request = new TransactionRequest();
+        request.setFaddr(sharedPreferences.getString("publicKey", ""));
+        request.setGroupby(true);
+        helper.sign(request);
+
+        new TransactionTask(request) {
+            protected void onPostExecute(List<Coin> result) {
+                int balanceCount = 0;
+                for (Coin coin : result) {
+                    if (coin.getType().equals("MT") || coin.getType().equals("ED")) {
+                        balanceCount += coin.getAmount();
+                    } else if (coin.getType().equals("RR") || coin.getType().equals("TX")) {
+                        balanceCount -= coin.getAmount();
+                    }
+                }
+                balance.setText(String.valueOf(balanceCount));
+            }
+        }.execute();
 
         ImageView img = (ImageView) parentView.findViewById(R.id.imageView2);
         img.setOnClickListener(new View.OnClickListener() {

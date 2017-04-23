@@ -17,14 +17,13 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import is.fyp.api.Coin;
 import is.fyp.api.Helper;
 import is.fyp.api.requests.TransactionRequest;
 import is.fyp.api.responses.BaseResponse;
 import is.fyp.api.tasks.EndorseTask;
+import is.fyp.api.tasks.GetCoinsTask;
 import is.fyp.api.tasks.TransactionTask;
 
 import static android.R.id.list;
@@ -47,52 +46,26 @@ public class NFCDisplayActivity extends Activity {
         Button pay = (Button) findViewById(R.id.pay);
         pay.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                final Helper helper = Helper.getInstance();
-                TransactionRequest request = new TransactionRequest();
+
                 final String publicKey = sharedPreferences.getString("publicKey", "");
-                //final String randomMerchant = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwnqEM1PNOF++GUR2oElEmkIQh0ZbXu7Fr7Fjouv36JTWaXA4EjHFBnZKghKq7flFDJ+UVEIHJr/BL30AT3e1AimMb3xmUbm2q3BThHXZr7gfPIeXmuGNRaaY9YPC9tX7xCAwhy9ChNpxr6Hlf226+Yc4Fq7be/QxYyka7DTu5cyNijk09pCCL6jA4aMm59yhfM9j8ESjxOxgYhV+qL8Mz9okHT0IvetUZsHdDtWbkarfEpZAoyZZNXguod0XCgWZwVCK9+tpJzk4S/XSWu12UZyQ8PKYIvw5Tgoo6cJOJ/vhvikaFvuzvfoG5sTIExrqa+Utrol2t0Hq5Vu2gOTR3wIDAQAB";
-                request.setFaddr(publicKey);
-                //request.setType("MT");
-                helper.sign(request);
+                final String targetPublickey = pkText.getText().toString().trim();
+                final int amount = Integer.parseInt(amountText.getText().toString());
 
-                new TransactionTask(request) {
-                    protected void onPostExecute(List<Coin> result) {
+                new GetCoinsTask(){
+                    protected void onPostExecute(ArrayList<String> result) {
+                        List<Coin> pay = new ArrayList<>();
 
-                        ArrayList<String> endorsed = new ArrayList<String>();
-                        for (Coin coin : result) {
-                            if(coin.getType().equals("TX")) {
-                                endorsed.add(coin.getSn());
-                                //endorsed.add(coin.getHsign());
-                                Log.d("used coin", coin.getHsign());
-                            }
+                        if (amount != result.size()) {
+                            return;
                         }
 
-                        int amt = Integer.parseInt(amountText.getText().toString());
-                        int count = 0;
-                        List<Coin> pay = new ArrayList<>();
-                        outerloop:
-                        for (Coin coin : result) {
-                            if(!coin.getType().equals("MT")) {
-                                continue ;
-                            }
-                            Log.d("count", String.valueOf(count));
-                            if(amt == count) {
-                                break ;
-                            }
-                            for (String endorsedHash : endorsed) {
-                                if(endorsedHash.equals(coin.getHsign())) {
-                                    endorsed.remove(endorsedHash);
-                                    continue outerloop;
-                                }
-                            }
+                        for (String coin : result) {
                             Coin temp = new Coin();
                             temp.setFaddr(publicKey);
-                            temp.setTaddr(pkText.getText().toString().trim());
+                            temp.setTaddr(targetPublickey);
                             temp.setType("TX");
-                            temp.setSn(coin.getHsign());
-                            Log.d("hsign", coin.getHsign());
+                            temp.setSn(coin);
                             pay.add(temp);
-                            count++;
                         }
 
                         new EndorseTask(pay) {
@@ -105,7 +78,8 @@ public class NFCDisplayActivity extends Activity {
                             }
                         }.execute();
                     }
-                }.execute();
+                }.execute(publicKey, amount);
+
                 Intent i = new Intent(NFCDisplayActivity.this, MenuActivity.class);
                 startActivity(i);
             }

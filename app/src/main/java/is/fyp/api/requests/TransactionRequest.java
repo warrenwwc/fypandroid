@@ -8,6 +8,7 @@ public class TransactionRequest extends BaseRequest {
 
     private int limit;
     private int offset;
+    private boolean groupby;
 
     public TransactionRequest() {
         this.setLimit(100);
@@ -28,5 +29,13 @@ public class TransactionRequest extends BaseRequest {
 
     public void setOffset(int offset) {
         this.offset = offset;
+    }
+
+    public boolean isGroupby() {
+        return groupby;
+    }
+
+    public void setGroupby(boolean groupby) {
+        this.groupby = groupby;
     }
 }

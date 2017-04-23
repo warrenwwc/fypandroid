@@ -9,14 +9,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import is.fyp.R;
 import is.fyp.api.Coin;
 import is.fyp.api.Helper;
+import is.fyp.api.requests.RegisterRequest;
 import is.fyp.api.requests.TransactionRequest;
+import is.fyp.api.tasks.RegisterTask;
 import is.fyp.api.tasks.TransactionTask;
 
 /**
@@ -53,6 +58,7 @@ public class CalendarFragment extends Fragment {
         final Helper helper = Helper.getInstance();
         TransactionRequest request = new TransactionRequest();
         request.setFaddr(sharedPreferences.getString("publicKey", ""));
+        request.setGroupby(true);
         //request.setType("MT");
         helper.sign(request);
 
@@ -60,10 +66,15 @@ public class CalendarFragment extends Fragment {
             protected void onPostExecute(List<Coin> result) {
                 Log.d("coin.length", String.valueOf(result.size()));
                 ArrayList<HashMap<String, String>> myListData = new ArrayList<HashMap<String, String>>();
+                Map<String, String> keyMap = new HashMap<String, String>();
+                keyMap.put("MT", "Bought");
+                keyMap.put("TX", "Paid");
+                keyMap.put("ED", "Received");
+                keyMap.put("RR", "Revoked");
                 for (Coin coin : result) {
-                    Log.d("sn:", coin.getSn());
+                    //Log.d("sn:", coin.getSn());
                     HashMap<String, String> item = new HashMap<String, String>();
-                    item.put(ID_TITLE, coin.getType() + ": " + coin.getSn());
+                    item.put(ID_TITLE, keyMap.get(coin.getType()) + ": " + coin.getAmount());
                     item.put(ID_SUBTITLE, coin.getTime());
                     myListData.add(item);
                 }
