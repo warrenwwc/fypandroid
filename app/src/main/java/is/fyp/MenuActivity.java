@@ -1,7 +1,10 @@
 package is.fyp;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -9,6 +12,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import is.fyp.uiFragment.CalendarFragment;
@@ -42,6 +47,28 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
         setUpElements();
         if( savedInstanceState == null )
             changeFragment(new HomeFragment());
+
+
+
+
+
+
+        /*ProgressDialog dialog = new ProgressDialog(MenuActivity.this);
+        dialog.setCancelable(true);
+        //dialog.setIcon(resId);
+        //dialog.setTitle("KT Coin");
+        dialog.setContentView(R.layout.progressdialog);
+        //dialog.setMessage("等陣啦");
+        //dialog.setContentView(R.id.);
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        //dialog.setIndeterminate(true);
+
+        //dialog.setIndeterminateDrawable(getDrawable(R.drawable.my_animation));
+        //dialog.setIndeterminateDrawable();
+        //dialog.setIndeterminateDrawable(BackupRestoreActivityContext.getResources().getDrawable(R.drawable.my_animation));
+        dialog.show();*/
+
+
     }
 
     private void setUpMenu() {

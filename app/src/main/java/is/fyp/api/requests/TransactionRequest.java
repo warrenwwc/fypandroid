@@ -1,5 +1,8 @@
 package is.fyp.api.requests;
 
+import android.view.View;
+import android.widget.TextView;
+
 /**
  * Created by Jason on 5/4/2017.
  */

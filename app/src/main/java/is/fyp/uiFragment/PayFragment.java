@@ -2,6 +2,7 @@ package is.fyp.uiFragment;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -29,6 +30,7 @@ import is.fyp.MenuActivity;
 import is.fyp.NFCDisplayActivity;
 import is.fyp.R;
 import is.fyp.ResideMenu;
+import is.fyp.Utils;
 import is.fyp.api.Coin;
 import is.fyp.api.Helper;
 import is.fyp.api.requests.TransactionRequest;
@@ -91,20 +93,29 @@ public class PayFragment extends Fragment {
         Toolbar toolbar = (Toolbar) parentView.findViewById(R.id.toolbar);
         toolbar.setTitle("Pay To");
 
-        Button payButton = (Button) parentView.findViewById(R.id.button6);
+        final Button payButton = (Button) parentView.findViewById(R.id.button6);
         payButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
                 //final Helper helper = Helper.getInstance();
                 //TransactionRequest request = new TransactionRequest();
                 final String publicKey = sharedPreferences.getString("publicKey", "");
                 final int amount = Integer.parseInt(targetAmount);
 
                 new GetCoinsTask(){
+
+                    private Dialog dialog;
+
+                    protected void onPreExecute () {
+                        this.dialog = Utils.getLoader(PayFragment.this.getContext());
+                        this.dialog.show();
+                    }
+
                     protected void onPostExecute(ArrayList<String> result) {
                         List<Coin> pay = new ArrayList<>();
 
                         if (amount != result.size()) {
+                            Toast.makeText(PayFragment.this.getContext(), "Endorse Error: not enough coin",  Toast.LENGTH_LONG).show();
+                            dialog.dismiss();
                             return;
                         }
 
@@ -118,81 +129,24 @@ public class PayFragment extends Fragment {
                         }
 
                         new EndorseTask(pay) {
+
                             protected void onPostExecute(BaseResponse result) {
+                                dialog.dismiss();
                                 if (!result.hasError()) {
                                     Log.d("Endorse", result.message);
+                                    Toast.makeText(PayFragment.this.getContext(), "Payment Successful",  Toast.LENGTH_LONG).show();
                                 }else{
                                     Log.d("Endorse Error", result.error);
+                                    Toast.makeText(PayFragment.this.getContext(), "Endorse Error: " + result.error,  Toast.LENGTH_LONG).show();
                                 }
+
+                                parentActivity.changeFragment(new HomeFragment());
                             }
                         }.execute();
                     }
                 }.execute(publicKey, amount);
 
 
-
-
-/*
-                //final String randomMerchant = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwnqEM1PNOF++GUR2oElEmkIQh0ZbXu7Fr7Fjouv36JTWaXA4EjHFBnZKghKq7flFDJ+UVEIHJr/BL30AT3e1AimMb3xmUbm2q3BThHXZr7gfPIeXmuGNRaaY9YPC9tX7xCAwhy9ChNpxr6Hlf226+Yc4Fq7be/QxYyka7DTu5cyNijk09pCCL6jA4aMm59yhfM9j8ESjxOxgYhV+qL8Mz9okHT0IvetUZsHdDtWbkarfEpZAoyZZNXguod0XCgWZwVCK9+tpJzk4S/XSWu12UZyQ8PKYIvw5Tgoo6cJOJ/vhvikaFvuzvfoG5sTIExrqa+Utrol2t0Hq5Vu2gOTR3wIDAQAB";
-                request.setFaddr(publicKey);
-                request.setLimit(1000);
-                //request.setType("MT");
-                helper.sign(request);
-
-
-                new TransactionTask(request) {
-                    protected void onPostExecute(List<Coin> result) {
-
-                        ArrayList<String> endorsed = new ArrayList<String>();
-                        for (Coin coin : result) {
-                            if(coin.getType().equals("TX") || coin.getType().equals("RR")) {
-                                endorsed.add(coin.getSn());
-                                //endorsed.add(coin.getHsign());
-                                Log.d("used coin", coin.getHsign());
-                            }
-                        }
-
-                        int amt = Integer.parseInt(targetAmount);
-                        int count = 0;
-                        List<Coin> pay = new ArrayList<>();
-                        outerloop:
-                        for (Coin coin : result) {
-                            if(!coin.getType().equals("MT") && !coin.getType().equals("ED")) {
-                                continue ;
-                            }
-                            Log.d("count", String.valueOf(count));
-                            if(amt == count) {
-                                break ;
-                            }
-                            for (String endorsedHash : endorsed) {
-                                if(endorsedHash.equals(coin.getHsign())) {
-                                    endorsed.remove(endorsedHash);
-                                    continue outerloop;
-                                }
-                            }
-                            Coin temp = new Coin();
-                            temp.setFaddr(publicKey);
-                            temp.setTaddr(targetPublickey);
-                            temp.setType("TX");
-                            temp.setSn(coin.getHsign());
-                            Log.d("hsign", coin.getHsign());
-                            pay.add(temp);
-                            count++;
-                        }
-
-                        new EndorseTask(pay) {
-                            protected void onPostExecute(BaseResponse result) {
-                                if (!result.hasError()) {
-                                    Log.d("Endorse", result.message);
-                                }else{
-                                    Log.d("Endorse Error", result.error);
-                                }
-                            }
-                        }.execute();
-                    }
-                }.execute();*/
-
-                //parentActivity.changeFragment(new HomeFragment());
             }
         });
     }

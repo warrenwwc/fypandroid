@@ -1,5 +1,6 @@
 package is.fyp.uiFragment;
 
+import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import is.fyp.R;
+import is.fyp.Utils;
 import is.fyp.api.Coin;
 import is.fyp.api.Helper;
 import is.fyp.api.requests.RegisterRequest;
@@ -59,10 +61,21 @@ public class CalendarFragment extends Fragment {
         TransactionRequest request = new TransactionRequest();
         request.setFaddr(sharedPreferences.getString("publicKey", ""));
         request.setGroupby(true);
+        request.setLimit(10000);
         //request.setType("MT");
         helper.sign(request);
+        //final Dialog dialog = Utils.getLoader(CalendarFragment.this.getContext());
+
 
         new TransactionTask(request) {
+
+            private Dialog dialog;
+
+            protected void onPreExecute () {
+                this.dialog = Utils.getLoader(CalendarFragment.this.getContext());
+                this.dialog.show();
+            }
+
             protected void onPostExecute(List<Coin> result) {
                 Log.d("coin.length", String.valueOf(result.size()));
                 ArrayList<HashMap<String, String>> myListData = new ArrayList<HashMap<String, String>>();
@@ -73,6 +86,9 @@ public class CalendarFragment extends Fragment {
                 keyMap.put("RR", "Revoked");
                 for (Coin coin : result) {
                     //Log.d("sn:", coin.getSn());
+                    if (coin.getType().equals("TX") && coin.getTaddr().equals(sharedPreferences.getString("publicKey", ""))) {
+                        continue;
+                    }
                     HashMap<String, String> item = new HashMap<String, String>();
                     item.put(ID_TITLE, keyMap.get(coin.getType()) + ": " + coin.getAmount());
                     item.put(ID_SUBTITLE, coin.getTime());
@@ -87,6 +103,7 @@ public class CalendarFragment extends Fragment {
                                 new int[]{android.R.id.text1, android.R.id.text2}
                         )
                 );
+                this.dialog.dismiss();
             }
         }.execute();
 

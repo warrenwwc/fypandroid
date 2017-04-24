@@ -170,6 +170,9 @@ public class RegisterActivity extends AppCompatActivity {
                     editor.putString("name", name.getText().toString());
                     editor.putString("email", email.getText().toString());
 
+                    Helper helper = Helper.getInstance();
+                    helper.setPrivateKey(privateKeyKeyString);
+
                     try {
                         MessageDigest md = MessageDigest.getInstance("SHA-256");
                         md.update(pass1.getText().toString().getBytes("UTF-8")); // or UTF-16 if needed

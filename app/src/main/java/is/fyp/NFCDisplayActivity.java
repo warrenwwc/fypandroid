@@ -1,6 +1,7 @@
 package is.fyp;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.nfc.NdefMessage;
@@ -25,6 +26,7 @@ import is.fyp.api.responses.BaseResponse;
 import is.fyp.api.tasks.EndorseTask;
 import is.fyp.api.tasks.GetCoinsTask;
 import is.fyp.api.tasks.TransactionTask;
+import is.fyp.uiFragment.CalendarFragment;
 
 import static android.R.id.list;
 
@@ -52,10 +54,20 @@ public class NFCDisplayActivity extends Activity {
                 final int amount = Integer.parseInt(amountText.getText().toString());
 
                 new GetCoinsTask(){
+                    private Dialog dialog;
+
+                    protected void onPreExecute () {
+                        this.dialog = Utils.getLoader(NFCDisplayActivity.this);
+                        this.dialog.show();
+                    }
+
+
                     protected void onPostExecute(ArrayList<String> result) {
                         List<Coin> pay = new ArrayList<>();
 
                         if (amount != result.size()) {
+                            Toast.makeText(NFCDisplayActivity.this, "Endorse Error: not enough coin",  Toast.LENGTH_LONG).show();
+                            dialog.dismiss();
                             return;
                         }
 
@@ -70,10 +82,13 @@ public class NFCDisplayActivity extends Activity {
 
                         new EndorseTask(pay) {
                             protected void onPostExecute(BaseResponse result) {
+                                dialog.dismiss();
                                 if (!result.hasError()) {
                                     Log.d("Endorse", result.message);
+                                    Toast.makeText(NFCDisplayActivity.this, "Payment Successful",  Toast.LENGTH_LONG).show();
                                 }else{
                                     Log.d("Endorse Error", result.error);
+                                    Toast.makeText(NFCDisplayActivity.this, "Endorse Error: " + result.error,  Toast.LENGTH_LONG).show();
                                 }
                             }
                         }.execute();

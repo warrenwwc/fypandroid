@@ -48,6 +48,7 @@ public class HomeFragment extends Fragment {
         final Helper helper = Helper.getInstance();
         TransactionRequest request = new TransactionRequest();
         request.setFaddr(sharedPreferences.getString("publicKey", ""));
+        request.setLimit(10000);
         request.setGroupby(true);
         helper.sign(request);
 
@@ -55,6 +56,9 @@ public class HomeFragment extends Fragment {
             protected void onPostExecute(List<Coin> result) {
                 int balanceCount = 0;
                 for (Coin coin : result) {
+                    if (coin.getType().equals("TX") && coin.getTaddr().equals(sharedPreferences.getString("publicKey", ""))) {
+                        continue;
+                    }
                     if (coin.getType().equals("MT") || coin.getType().equals("ED")) {
                         balanceCount += coin.getAmount();
                     } else if (coin.getType().equals("RR") || coin.getType().equals("TX")) {
